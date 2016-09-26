@@ -1,6 +1,6 @@
 = Configuration Tool
 Jnorthr <james.northrop@orange.fr>
-v0.1, 2015-09-25
+v0.1, 2016-09-25
 :icons: font
 :toc: left
 :imagesdir: images
@@ -9,11 +9,11 @@ v0.1, 2015-09-25
 
 == Status
 
-Travis Build Status for Master Branch: https://travis-ci.org/jnorthr/gradle-asciidoctorj.svg?branch=master[![Build Status]]
+Travis Build Status for Master Branch: https://travis-ci.org/jnorthr/ConfigSlurper.svg?branch=master[![Build Status]]
 
-https://travis-ci.org/jnorthr/gradle-asciidoctorj[Build Status]
+https://travis-ci.org/jnorthr/ConfigSlurper[Build Status]
 
-A skeleton project for documentation users. Clone includes gradle build tool wrapper and folder structure like maven/gradle
+A skeleton project for groovy users. Clone includes gradle build tool wrapper and folder structure like maven/gradle
 
 == Pre-requisites
 
@@ -27,16 +27,15 @@ A skeleton project for documentation users. Clone includes gradle build tool wra
 
  . change directory ( cd ) into target folder location
 
- . run this command to create a folder named gradle-asciidoctorj and copy down all the pieces :
+ . run this command to create a folder named ConfigSlurper and copy down all the pieces :
 
-	`git clone https://github.com/jnorthr/gradle-asciidoctorj.git`
+	`git clone https://github.com/jnorthr/ConfigSlurper.git`
 
- . *cd gradle-asciidoctorj*
+ . *cd ConfigSlurper*
 
  . *./gradlew*
 
- . after step 4 completes, examine *gradle-asciidoctorj* folder to find the */build/docs* folder with an html file for each asciidoctor file in the */resources* folder 
+ . defaultTasks are declared and these tasks run automatically, when you use gradlew with no parameters 
 
 ''''
 
-TIP:  Have added a gradle task called *copyImages* to copy image files from the *./images* file into *$buildDir/docs/images*

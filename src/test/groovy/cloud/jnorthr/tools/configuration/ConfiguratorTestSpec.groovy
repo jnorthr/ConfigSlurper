@@ -25,12 +25,6 @@ class ConfigutationTestSpec extends Specification
   def setupSpec() {}     // run before the first feature method
   def cleanupSpec() {}   // run after the last feature method}
 
-  // feature methods
-
-  def "pushing an element on the stack"() {
-  	// blocks go here
-  }  
-
 /*
 Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to find in the system under specification. By convention, feature methods are named with String literals. Try to choose good names for your feature methods, and feel free to use any characters you like!
 
@@ -43,6 +37,9 @@ Clean up the feature's fixture
 Whereas the first and last phases are optional, the stimulus and response phases are always present (except in interacting feature methods), and may occur more than once.
 
 */
+
+  // Feature Methods
+
   // First Test
   def "Setup Configurator for default path"() {
     def ch;
@@ -89,6 +86,21 @@ Whereas the first and last phases are optional, the stimulus and response phases
 		ch.getVal('appName') == 'production'
   }
   
-  // helper methods
+
+  // 4th Test
+  def "4th Test: Ask app for 'local' mail.host"() {
+    given:
+        def ch = new Configurator();
+ 
+    when:
+		boolean  yn = ch.tester1('local')
+    then:
+    	// Asserts are implicit and not need to be stated.
+    	// Change "==" to "!=" and see what's happening!
+    	yn == true;
+ 		ch.getVal('email') == 'james.northrop@orange.fr'
+  }
+  
+    // helper methods
 } 
 

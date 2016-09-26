@@ -1,0 +1,42 @@
+= Configuration Tool
+Jnorthr <james.northrop@orange.fr>
+v0.1, 2015-09-25
+:icons: font
+:toc: left
+:imagesdir: images
+:sectlinks:
+:sectnums:
+
+== Status
+
+Travis Build Status for Master Branch: https://travis-ci.org/jnorthr/gradle-asciidoctorj.svg?branch=master[![Build Status]]
+
+https://travis-ci.org/jnorthr/gradle-asciidoctorj[Build Status]
+
+A skeleton project for documentation users. Clone includes gradle build tool wrapper and folder structure like maven/gradle
+
+== Pre-requisites
+
+ . Working internet connection
+ . Installed Git client to copy/clone this repo
+ . Ability to use terminal console
+
+== Steps
+
+ . open terminal console
+
+ . change directory ( cd ) into target folder location
+
+ . run this command to create a folder named gradle-asciidoctorj and copy down all the pieces :
+
+	`git clone https://github.com/jnorthr/gradle-asciidoctorj.git`
+
+ . *cd gradle-asciidoctorj*
+
+ . *./gradlew*
+
+ . after step 4 completes, examine *gradle-asciidoctorj* folder to find the */build/docs* folder with an html file for each asciidoctor file in the */resources* folder 
+
+''''
+
+TIP:  Have added a gradle task called *copyImages* to copy image files from the *./images* file into *$buildDir/docs/images*

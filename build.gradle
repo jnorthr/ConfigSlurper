@@ -42,3 +42,21 @@ task run2(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     args = ["${projectDir}"]
 }
+
+// Safari books online chapter 3 - hooking the build finihed processing
+gradle.buildFinished { buildResult ->
+	println "BUILD FINISHED"
+	println "build failure - "+ buildResult?.failure
+}
+task succeed{
+	doLast{
+		println "Hello World"
+	} // last
+} // end of succeed
+
+task fail{
+	doLast{
+		throw new Exception("Build failed !")
+	} // last
+} // end of fail
+

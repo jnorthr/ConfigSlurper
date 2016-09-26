@@ -42,20 +42,15 @@ public class Configurator{
 	
 	
 	/*
-	 * Non-default path to the config resource; we add the /resources token to this value
+	 * Non-default string of JSON payload
 	 */
-	public Configurator(String dir)
+	public Configurator(String payload)
 	{
-		say "hello from Configurator.groovy  path "+dir;	
-		path=dir+"/resources";
-		fn = "${path}/sample.config";
+		say "hello from Configurator.groovy with payload of "+payload.size()+" bytes";	
 
-		// Configurator script for Configurator.groovy
-		// see: http://mrhaki.blogspot.fr/2009/10/groovy-goodness-using-configslurper.html
-		configText = new File(fn).text
+		configText = payload;
 		setup('prod');
 	} // end of non-default constructor
-	
 	
 	
 	// construct specific runtime environment
@@ -80,8 +75,9 @@ public class Configurator{
 	def createConfig = { env ->
 		say "createConfig for ${env}"
 		environ = env;
-    	def configSlurper = new ConfigSlurper(env)
+    	def configSlurper = new ConfigSlurper(env);
     	configSlurper.registerConditionalBlock('servers', env)
+    	//configSlurper.registerConditionalBlock('data', env)
     	return configSlurper  //object
 	} // end of createConfig
 
@@ -114,7 +110,16 @@ public class Configurator{
 		println "HELLO from Configurator.groovy"
 		args.each{e-> println "arg="+e}
 		Configurator c;
-		if (args.size() > 0) { c = new Configurator(args[0]) } else { c = new Configurator(); }
+		String payload = """environments {
+    local {
+        appName = 'local'
+    }
+    prod {
+        appName = 'production'
+    }
+}
+""".toString()
+		if (args.size() > 0) { c = new Configurator(payload) } else { c = new Configurator(); }
 		
 		c.say "Goodbye from Configurator.groovy"
 		c.say "--- the end ---"

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import spock.lang.*
 //import javax.swing.JFileChooser;
 
-class ConfigutationTestSpec extends Specification 
+class ConfigurationTestSpec extends Specification 
 {
   // fields
   boolean flag = false;
@@ -25,7 +25,7 @@ class ConfigutationTestSpec extends Specification
   // run before every feature method
   def setup() 
   { 
-  	  ch = new Configurator(); 
+  	  ch = new Configurator(configText); 
   }          
 
   // run after every feature method
@@ -53,6 +53,7 @@ Conceptually, a feature method consists of four phases:
   // First Test
   def "1st Test: Setup Configurator for default path"() {
     given:
+		println "1st Test: Setup Configurator for default path"
  
     when:
 		flag = runner('prod');
@@ -65,8 +66,9 @@ Conceptually, a feature method consists of four phases:
 
 
   // 2nd Test
-  def "2nd Test: Set Configurator initial folder to unknown path"() {
+  def "2nd Test: Set Configurator initial payload to bad JSON format"() {
     given:
+		println "2nd Test: Set Configurator initial payload to bad JSON format"
  
     when:
 		ch = new Configurator("/Fred");
@@ -74,14 +76,14 @@ Conceptually, a feature method consists of four phases:
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-    	def e = thrown(java.io.FileNotFoundException)
+    	def e = thrown(org.codehaus.groovy.control.MultipleCompilationErrorsException)
 	    e.cause == null
   }
 
   // 3rd Test
   def "3rd Test: Ask appName for 'prod' environment"() {
     given:
-        
+		println "3rd Test: Ask appName for 'prod' environment"        
     when:
 		boolean  yn = runner('prod')
  
@@ -96,6 +98,7 @@ Conceptually, a feature method consists of four phases:
   // 4th Test
   def "4th Test: Ask app for 'local' mail.host"() {
     given:
+		println "4th Test: Ask app for 'local' mail.host"
         
     when:
 		boolean  yn = ch.setup('local')
@@ -110,7 +113,8 @@ Conceptually, a feature method consists of four phases:
   // Fifth Test
   def "5th Test: Setup Configurator to use 'prod' environment"() {
     given:
- 
+		println "5th Test: Setup Configurator to use 'prod' environment"
+		 
     when:
 		flag = runner('prod');
  
@@ -125,6 +129,7 @@ Conceptually, a feature method consists of four phases:
   // Sixth Test
   def "6th Test: Setup Configurator to use 'local' environment"() {
     given:
+		println "6th Test: Setup Configurator to use 'local' environment"
  		
     when:
 		flag = ch.setup('local');
@@ -140,6 +145,7 @@ Conceptually, a feature method consists of four phases:
   // Seventh Test
   def "7th Test: Confirm dump() of configObject yields correct values"() {
     given:
+    	println "7th Test: Confirm dump() of configObject yields correct values"
 		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]";
  		
     when:
@@ -169,7 +175,7 @@ Conceptually, a feature method consists of four phases:
 
 
 
-  // Nineth Test
+  // Ninth Test
   def "9th Test: Put a new 'alias' key entry into the config then check HAS()"() {
   		println "9th Test: Put a new 'alias' key entry into the config then check HAS()"
   		
@@ -185,10 +191,41 @@ Conceptually, a feature method consists of four phases:
   } // end of test
 
 
+  // Tenth Test
+  def "10th Test: Use external JSON payload, then put a new 'alias' key entry into the config then check HAS()"() {
+  		println "10th Test: Use external JSON payload, then put a new 'alias' key entry into the config then check HAS()"
+	
+    given:
+  		ch = new Configurator(payload); 
+    
+		println ch.dump();
+
+		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]" 		
+    when:
+		ch.put('alias','jnorthr');
+		 
+    then:
+		ch.has('alias') == true
+		ch.get('alias') == 'jnorthr';		
+  } // end of test
+
+
   
   	// =============================================================
     // Helper Methods
 	def say(txt) { println txt; }
+
+	// simple sample
+	String payload = """environments {
+    local {
+        appName = 'local'
+    }
+    prod {
+        appName = 'production'
+    }
+}
+""".toString()
+
 
 	// Holds text found in the external configuration file
 	String configText="""// Custom block with setting

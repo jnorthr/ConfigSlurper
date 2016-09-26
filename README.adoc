@@ -9,7 +9,7 @@ v0.1, 2016-09-25
 
 == Status
 
-Travis Build Status for Master Branch: https://travis-ci.org/jnorthr/ConfigSlurper.svg?branch=master[![Build Status]]
+Travis Build Status for Master Branch: https://travis-ci.org/jnorthr/ConfigSlurper.svg?branch=master[]
 
 https://travis-ci.org/jnorthr/ConfigSlurper[Build Status]
 

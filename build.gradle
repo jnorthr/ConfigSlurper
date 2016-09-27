@@ -11,6 +11,12 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 
+ext{
+	appName = 'Configurator'
+	codeversion = '0.2'
+	vendor ='jnorthr'
+}
+
 defaultTasks 'clean', 'build','test','run1','run2'
 
 // In this section you declare where to find the dependencies of your project
@@ -43,7 +49,29 @@ task run2(type: JavaExec) {
     args = ["${projectDir}"]
 }
 
-// Safari books online chapter 3 - hooking the build finihed processing
+jar.doFirst{
+      manifest {
+            attributes(
+                "Manifest-Version"      : '1.0',
+                "Created-By"            : vendor,
+                "Specification-Title"   : appName,
+                "Specification-Version" : codeversion,
+                "Specification-Vendor"  : vendor,
+                "Implementation-Title"  : appName,
+                "Implementation-Version": codeversion,
+                "Implementation-Vendor" : vendor,
+                "Main-Class"            : "cloud.jnorthr.tools.configuration.Configurator",
+                "Built-By"				: System.properties['user.name'],
+                "Class-Path"            : configurations.compile.collect { it.getName() }.join(' ')
+                //"Build-Date"            : buildDate,
+                //"Build-Time"            : project.buildTime
+             )
+      } // end of manifest
+} // end of doFirst
+
+// ----------------------------------------------------------
+// Following are internal to gradle
+// Safari books online chapter 3 - hooking the build finished processing
 gradle.buildFinished { buildResult ->
 	println "BUILD FINISHED"
 	println "build failure - "+ buildResult?.failure

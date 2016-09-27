@@ -11,7 +11,8 @@ v0.1, 2016-09-25
 
 Travis Build Status for Master Branch: image:https://img.shields.io/travis/jnorthr/ConfigSlurper.svg[Build Status (Travis CI), link=https://travis-ci.org/jnorthr/ConfigSlurper]
 
-A skeleton project for groovy users. Clone includes gradle build tool wrapper and folder structure like maven/gradle
+A skeleton project for groovy users. Clone includes gradle 3.1 build tool wrapper and folder structure like maven/gradle for use with JDK7+ (but not JDK6)
+even though the config code will run on JDK6+
 
 == Pre-requisites
 
@@ -27,7 +28,7 @@ A skeleton project for groovy users. Clone includes gradle build tool wrapper an
 
  . run this command to create a folder named ConfigSlurper and copy down all the pieces :
 
-	`git clone https://github.com/jnorthr/ConfigSlurper.git`
+	*git clone https://github.com/jnorthr/ConfigSlurper.git*
 
  . *cd ConfigSlurper*
 

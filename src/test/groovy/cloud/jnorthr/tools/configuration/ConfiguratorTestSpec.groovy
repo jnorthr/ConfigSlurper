@@ -25,7 +25,7 @@ class ConfigurationTestSpec extends Specification
   // run before every feature method
   def setup() 
   { 
-  	  ch = new Configurator(configText); 
+  	  ch = new Configurator(); 
   }          
 
   // run after every feature method
@@ -76,12 +76,12 @@ Conceptually, a feature method consists of four phases:
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-    	def e = thrown(org.codehaus.groovy.control.MultipleCompilationErrorsException)
+    	def e = thrown(java.io.FileNotFoundException)
 	    e.cause == null
   }
 
   // 3rd Test
-  def "3rd Test: Ask appName for 'prod' environment"() {
+  def "3rd Test: Ask appMode for 'prod' environment"() {
     given:
 		println "3rd Test: Ask appName for 'prod' environment"        
     when:
@@ -91,7 +91,7 @@ Conceptually, a feature method consists of four phases:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
     	yn == true;
-		ch.get('appName') == 'production'
+		ch.get('appMode') == 'production'
   } // end of test
   
 
@@ -101,7 +101,7 @@ Conceptually, a feature method consists of four phases:
 		println "4th Test: Ask app for 'local' mail.host"
         
     when:
-		boolean  yn = ch.setup('local')
+		boolean  yn = ch.parse('local')
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
@@ -132,7 +132,7 @@ Conceptually, a feature method consists of four phases:
 		println "6th Test: Setup Configurator to use 'local' environment"
  		
     when:
-		flag = ch.setup('local');
+		flag = ch.parse('local');
  
     then:
 		// Asserts are implicit and not need to be stated.
@@ -145,8 +145,9 @@ Conceptually, a feature method consists of four phases:
   // Seventh Test
   def "7th Test: Confirm dump() of configObject yields correct values"() {
     given:
-    	println "7th Test: Confirm dump() of configObject yields correct values"
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]";
+    	println "7th Test: Confirm dump() of configObject yields correct values";
+    	println ch.dump();
+		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, name:Roberto, framework:Grails, language:Groovy]";
  		
     when:
 		def devMap = ['name':'Roberto', 'framework':'Grails', 'language':'Groovy']
@@ -154,7 +155,7 @@ Conceptually, a feature method consists of four phases:
  
     then:
 		println ch.dump();
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production, name:Roberto, framework:Grails, language:Groovy]"
+		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, name:Roberto, framework:Grails, language:Groovy]"
   } // end of test
 
 
@@ -164,13 +165,13 @@ Conceptually, a feature method consists of four phases:
   		
     given:
 		println ch.dump();
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]" 		
+		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production]" 		
     when:
 		ch.put('alias','jnorthr');
 		 
     then:
 		println ch.dump();
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production, alias:jnorthr]"
+		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, alias:jnorthr]"
   } // end of test
 
 
@@ -181,7 +182,7 @@ Conceptually, a feature method consists of four phases:
   		
     given:
 		println ch.dump();
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]" 		
+		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appMode:production]" 		
     when:
 		ch.put('alias','jnorthr');
 		 
@@ -196,11 +197,11 @@ Conceptually, a feature method consists of four phases:
   		println "10th Test: Use external JSON payload, then put a new 'alias' key entry into the config then check HAS()"
 	
     given:
-  		ch = new Configurator(payload); 
+  		ch.parse(payload); 
     
 		println ch.dump();
 
-		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appName:production]" 		
+		ch.dump() == "configObject=[data:[domain:cloud.jnorthr.tools, name:jnorthr], mail:[host:mail.server], email:james.b.northrop@googlemail.com, appMode:production]" 		
     when:
 		ch.put('alias','jnorthr');
 		 
@@ -218,10 +219,10 @@ Conceptually, a feature method consists of four phases:
 	// simple sample
 	String payload = """environments {
     local {
-        appName = 'local'
+        appMode = 'local'
     }
     prod {
-        appName = 'production'
+        appMode = 'production'
     }
 }
 """.toString()
@@ -244,10 +245,10 @@ servers {
 
 environments {
     local {
-        appName = 'local'
+        appMode = 'local'
     }
     prod {
-        appName = 'production'
+        appMode = 'production'
     }
 }
 
@@ -268,8 +269,8 @@ data{
 		say "prod Configurator.mail.host="+configObject.mail.host
 		assert configObject.mail.host == 'mail.server'
 
-		say "prod configObject.appName="+configObject.appName
-		configObject.appName == 'production';
+		say "prod configObject.appMode="+configObject.appMode
+		configObject.appMode == 'production';
 	} // end of runner
 
 } 

@@ -38,15 +38,18 @@ dependencies {
 
 mainClassName = "cloud.jnorthr.tools.configuration.Configurator"
 
+// run main method
 task run1(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
 }
 
+
+// feed gradle projectDir value as first parameter
 task run2(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
-    args = ["${projectDir}"]
+    args = ["${projectDir}/resources/sample.config"]
 }
 
 jar.doFirst{

@@ -29,24 +29,15 @@ public class Configurator{
 	// Default JSON payload
 	def payload = """// Environments section.
 environments {
-    dev {
-        mail.hostname = 'local'
-    }
-    test {
-        mail.hostname = 'test'
-    }
-    uat {
-        mail.hostname = 'uat'
-    }
-    qa {
-        mail.hostname = 'qa'
-    }
-    live {
-        mail.hostname = 'live'
+    local {
+        appName = 'local'
+        hostname = 'localhost'
+        appMode = 'local'
     }
     prod {
-        mail.hostname = 'prod'
+        hostname = 'prod'
         appMode = 'production'
+        appName = 'production'
     }
 }
 """;
@@ -111,7 +102,10 @@ environments {
 	public ConfigObject parse(String e)
 	{		
 		// Create Configurator slurper and set environment to prod.
+		say "\nparse(${e})"
+		env = e;
 		configObject = createConfig(e).parse(configText);
+		say "config of ${env} now set to:"+dump();
 		return configObject
 	} // end of runner
 
@@ -162,6 +156,13 @@ environments {
 		configObject.containsKey(k)
 	} // end of method
 		
+	// take each key and printit	
+	public see()
+	{
+		configObject.each{e,v-> println "key:"+e+" v="+v;}
+	} // end of method
+
+
 		
 	// Serialize selected environment to a writer ( not full original payload! )
 	// then save to external UTF-8 file with provided filename 'fn'
@@ -183,14 +184,31 @@ environments {
 		Configurator c;
 		if (args.size() > 0) 
 		{ 
-			println "running with args[0]="+args[0]
+			println "\nloading configs from  args[0]="+args[0]+"\n"
 			c = new Configurator(args[0]);
+			println "Configurator made\n";
+			println c.dump();
+			c.parse('local');
+			println "parse(local)\n";
+			
+			println c.dump();
 		} 
 		else 
 	    { 
 	    	println "running default constructor"
 		 	c = new Configurator(); 
+			println c.dump();
 		}
+
+ 		println "";
+		println "has 'data' key ? "+c.has('data');
+		println "has 'appName' key ? "+c.has('appName');
+		println "has 'hostname' key ? "+c.has('hostname');
+		println "has 'appMode' key ? "+c.has('appMode');
+		println "has 'email' key ? "+c.has('email');
+		println "";
+		println c.dump();
+		c.see();
 		
 		c.save("groovy3.config"); // only saves values from chosen environment
 		c.say "Goodbye from Configurator.groovy"

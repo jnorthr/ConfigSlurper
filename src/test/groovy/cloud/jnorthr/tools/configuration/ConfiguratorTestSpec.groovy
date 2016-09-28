@@ -99,14 +99,16 @@ Conceptually, a feature method consists of four phases:
   def "4th Test: Ask app for 'local' mail.host"() {
     given:
 		println "4th Test: Ask app for 'local' mail.host"
-        
+        println ch.dump();
+
     when:
-		boolean  yn = ch.parse('local')
+		ch.parse('prod')
+        println ch.dump();
+		
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-    	yn == true;
- 		ch.get('email') == 'james.northrop@orange.fr'
+ 		ch.get('appMode') == 'production'
   } // end of text
   
   
@@ -114,15 +116,15 @@ Conceptually, a feature method consists of four phases:
   def "5th Test: Setup Configurator to use 'prod' environment"() {
     given:
 		println "5th Test: Setup Configurator to use 'prod' environment"
-		 
+    	println ch.dump();
+ 
     when:
-		flag = runner('prod');
+		ch.parse('prod');
  
     then:
 		// Asserts are implicit and not need to be stated.
-    	flag == true;
-		println "getting email="+ch.get('email');
-		ch.get('email') == "james.b.northrop@googlemail.com"
+    	println "getting appMode="+ch.get('appMode');
+		ch.get('appMode') == "production"
   } // end of test
 
     
@@ -130,24 +132,26 @@ Conceptually, a feature method consists of four phases:
   def "6th Test: Setup Configurator to use 'local' environment"() {
     given:
 		println "6th Test: Setup Configurator to use 'local' environment"
- 		
+ 		println ch.dump();
     when:
-		flag = ch.parse('local');
+		ch.parse('local');
+ 		println ch.dump();
  
     then:
 		// Asserts are implicit and not need to be stated.
-    	flag == true;
-		println "getting email="+ch.get('email');
-		ch.get('email') == "james.northrop@orange.fr"
+		ch.get('appName') == 'local'
+        	ch.get('hostname') == 'localhost'
+        	ch.get('appMode') == 'local'
+
   } // end of test
 
 
   // Seventh Test
   def "7th Test: Confirm dump() of configObject yields correct values"() {
     given:
-    	println "7th Test: Confirm dump() of configObject yields correct values";
-    	println ch.dump();
-		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, name:Roberto, framework:Grails, language:Groovy]";
+    		println "7th Test: Confirm dump() of configObject yields correct values";
+    		println ch.dump();
+		ch.dump() == "configObject=[hostname:prod, appMode:production, appName:production]";
  		
     when:
 		def devMap = ['name':'Roberto', 'framework':'Grails', 'language':'Groovy']
@@ -155,7 +159,7 @@ Conceptually, a feature method consists of four phases:
  
     then:
 		println ch.dump();
-		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, name:Roberto, framework:Grails, language:Groovy]"
+		ch.dump() == "configObject=[hostname:prod, appMode:production, appName:production, name:Roberto, framework:Grails, language:Groovy]"
   } // end of test
 
 
@@ -165,13 +169,13 @@ Conceptually, a feature method consists of four phases:
   		
     given:
 		println ch.dump();
-		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production]" 		
+		ch.dump() == "configObject=[hostname:prod, appMode:production, appName:production]" 		
     when:
 		ch.put('alias','jnorthr');
 		 
     then:
 		println ch.dump();
-		ch.dump() == "configObject=[mail:[hostname:prod], appMode:production, alias:jnorthr]"
+		ch.dump() == "configObject=[hostname:prod, appMode:production, appName:production, alias:jnorthr]"
   } // end of test
 
 
@@ -231,23 +235,15 @@ Conceptually, a feature method consists of four phases:
 	// Holds text found in the external configuration file
 	String configText="""// Custom block with setting
 // conditional per environment.
-servers {
-    local {
-        mail.host = 'greenmail'
-        email = 'james.northrop@orange.fr'
-    }
-
-    prod {
-        mail.host = 'mail.server'
-        email='james.b.northrop@googlemail.com'
-    }
-}
-
 environments {
     local {
         appMode = 'local'
+        mail.host = 'greenmail'
+        email = 'james.northrop@orange.fr'
     }
     prod {
+        mail.host = 'mail.server'
+        email='james.b.northrop@googlemail.com'
         appMode = 'production'
     }
 }

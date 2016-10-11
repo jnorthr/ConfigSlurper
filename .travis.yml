@@ -7,10 +7,10 @@ jdk:
 before_install:
  - chmod +x gradlew  
 
- deploy:
-   edge: true
-   provider: anynines
-   username: james.b.northrop@googlemail.com
-   password: secretpassword
-   organization: james_b_northrop_googlemail_com
-   space: test
+# deploy:
+#   edge: true
+#   provider: anynines
+#   username: james.b.northrop@googlemail.com
+#   password: secretpassword
+#   organization: james_b_northrop_googlemail_com
+#   space: test

@@ -7,6 +7,14 @@
  * user guide available at https://docs.gradle.org/3.1/userguide/tutorial_groovy_projects.html
  */
 
+// this plugin offers build scan reporting when gradlew -Dscan
+// to produce https://gradle.com/s/w4kwpvbnsu5ek link in an email they send to you if you do
+// one-at-a-time builds; probably good for big projects ?
+plugins {
+  id "com.gradle.build-scan" version "1.1.1"
+}
+buildScan { licenseAgreementUrl = 'https://gradle.com/terms-of-service'; licenseAgree = 'yes' }
+
 // Apply the groovy plugin to add support for Groovy
 apply plugin: 'groovy'
 apply plugin: 'application'

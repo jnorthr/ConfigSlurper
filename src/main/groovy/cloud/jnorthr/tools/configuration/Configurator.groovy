@@ -7,6 +7,13 @@ import static groovy.json.JsonParserType.*
  */
 public class Configurator{
 
+    /**
+     * This name points to a json structured configuration cache where user values are 
+     * stored between sessions.  
+     */
+    String configFile = System.getProperty("user.home") + File.separator  +".configurator.json";
+
+
 	// Holds text found in the external configuration file
 	String configText="";
 		
@@ -19,12 +26,6 @@ public class Configurator{
 	
 	// The name of the environment within the configuration file that governs following access
 	String env="prod";
-	
-	// The directory folder holding the external configuration file, note that .resource folder name is added to this path
-	String path = "./resources";
-	
-	// String holding absolute name of configuration file 
-	String fn = "${path}/sample.config";
 	
 	// Default JSON payload
 	def payload = """// Environments section.
@@ -48,49 +49,75 @@ environments {
 	 */
 	public Configurator()
 	{
-		say "hello from default constructor Configurator.groovy"	
+		say "Default constructor Configurator.groovy"	
 		
 		// see: http://mrhaki.blogspot.fr/2009/10/groovy-goodness-using-configslurper.html
 		// construct basic configObject from above 'payload'
-		configText = payload.toString();
+		read(configFile)
 		parse();
 	} // end of default constructor
 	
 	
 	/*
-	 * this constructor mounts the configuration file, if it exist, pointing to the 'prod' environment
+	 * Non-default constructor mounts the configuration file, if it exist, pointing to the 'prod' environment
 	 */
 	public Configurator(File fn)
 	{
 		say "hello from Configurator.groovy using a File"	
-		
-		configText = fn.text
-		configText = payload.toString();
+		if ( new File(fn).exists() )
+		{
+			configText = new File(fn).text;
+		}
+		else
+		{
+			throw new java.io.FileNotFoundException("Configurator constructor cannot find config file named $fn");
+		}
 		parse();
 	} // end of default constructor
 	
 	
 	/*
-	 * Non-default string of filename of external configuration file
+	 * Non-default constructor uses string name of a configuration file, if it exist, 
+	 * to create a ConfigObject
 	 */
 	public Configurator(String fn)
 	{
 		say "hello from Configurator.groovy loading payload from file "+fn;	
-		configText = new File(fn).text;
+		read(fn);
 		parse();
 	} // end of non-default constructor
 
 	
+	// fill config text area from external file else default to skeleton
+	public read(String fn)
+	{	
+		if ( new File(fn).exists() )
+		{
+			configText = new File(fn).text;
+		}
+		else
+		{
+			throw new java.io.FileNotFoundException("Configurator constructor cannot find config file named $fn");
+			//configText = payload.toString();
+		}
+	} // end of read	
 	
-	// construct specific runtime environment from external file
+	
+	/*
+	 * Construct specific runtime environment from external json config file whose name
+	 * is provided as a string
+	 */
 	public ConfigObject load(String fn)
 	{	
-		configText = new File(fn).text;	
+		read(fn);	
 		return parse();
 	} // end of load
 	
 
-	// construct specific configObject runtime environment
+
+	/*
+	 * Construct specific configObject runtime environment for default 'prod' environment 
+	 */
 	public ConfigObject parse()
 	{		
 		// Create Configurator slurper and set environment to prod.
@@ -98,7 +125,9 @@ environments {
 	} // end of runner
 
 	
-	// construct specific configObject runtime environment
+	/*
+	 * Construct specific configObject runtime environment for provided environment string value
+	 */
 	public ConfigObject parse(String e)
 	{		
 		// Create Configurator slurper and set environment to prod.
@@ -110,7 +139,9 @@ environments {
 	} // end of runner
 
 
-	// internal method to show content of configObject 	
+	/*
+	 * internal method to show content of configObject 	
+	 */
 	String dump() { return "configObject="+configObject.toString(); }
 
 
@@ -163,13 +194,25 @@ environments {
 	} // end of method
 
 
+	/*
+	 * Serialize selected environment to a writer ( may not be full original payload! )
+	 * then save to external UTF-8 file with provided filename 'fn'
+	 */
+	public save()
+	{
+		save(configFile);
+	} // end of method
 		
-	// Serialize selected environment to a writer ( not full original payload! )
-	// then save to external UTF-8 file with provided filename 'fn'
+		
+	/*
+	 * Serialize selected environment to a writer ( not full original payload! )
+	 * then save to external UTF-8 file with provided filename 'fn'
+	 */
 	public save(String fn)
 	{
 		say "save to --->"+fn;
 		def file3 = new File(fn)
+		
 		// Or a writer object:
 		file3.withWriter('UTF-8') { writer ->
 			configObject.writeTo(writer)
@@ -177,10 +220,19 @@ environments {
 	} // end of method
 		
 		
+	// =============================================================================    
+    /**
+     * The primary method to execute this class. Can be used to test and examine logic and performance issues. 
+     * 
+     * argument is a list of strings provided as command-line parameters. 
+     * 
+     * @param  args a list of possibly zero entries from the command line
+     */
 	public static void main(String[] args)
 	{
 		println "Hello from Configurator.groovy"
 		args.eachWithIndex{e,ix-> println "arg${ix}="+e}
+		
 		Configurator c;
 		if (args.size() > 0) 
 		{ 

@@ -25,7 +25,7 @@ ext{
 	vendor ='jnorthr'
 }
 
-defaultTasks 'clean', 'build','test','run1','run2'
+defaultTasks 'clean', 'build','test','run1','run2', 'run'
 
 // In this section you declare where to find the dependencies of your project
 repositories {

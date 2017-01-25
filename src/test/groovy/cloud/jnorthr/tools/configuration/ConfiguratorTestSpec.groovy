@@ -65,6 +65,7 @@ Conceptually, a feature method consists of four phases:
   } // end of test
 
 
+
   // 2nd Test
   def "2nd Test: Set Configurator initial payload to bad JSON format"() {
     given:
@@ -79,6 +80,8 @@ Conceptually, a feature method consists of four phases:
     	def e = thrown(java.io.FileNotFoundException)
 	    e.cause == null
   }
+
+
 
   // 3rd Test
   def "3rd Test: Ask appMode for 'prod' environment"() {

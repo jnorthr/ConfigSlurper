@@ -21,7 +21,7 @@ apply plugin: 'application'
 
 ext{
 	appName = 'Configurator'
-	codeversion = '0.2'
+	codeversion = '0.3'
 	vendor ='jnorthr'
 }
 
@@ -59,6 +59,14 @@ task run2(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     args = ["${projectDir}/resources/sample.config"]
 }
+
+// run config.file existence checker task
+task runChecker(type: JavaExec) {
+    main = "cloud.jnorthr.tools.configuration.Checker"
+    classpath = sourceSets.main.runtimeClasspath
+    //args = [".fred.json"]
+}
+
 
 jar.doFirst{
       manifest {

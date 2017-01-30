@@ -7,17 +7,26 @@ package cloud.jnorthr.tools.configuration;
 public class Checker{
 
     /**
-     * These default names points to a json structured configuration cache where user values are 
-     * stored between sessions.  
+     * These default names point to a json-structured configuration cache where user values are stored between sessions.  
      */
     String configPath     = System.getProperty("user.home") + File.separator;
-    String configFile     = ".config.json";
+
+
+    /**
+     * This name points to a json-structured configuration name of a file where user values are stored between sessions.  
+     */    String configFile     = ".config.json";
+
+    /**
+     * This full file name, including path and filename, points to a json-structured configuration file where user values are stored between sessions.  
+     */
     String configFileName = configPath + configFile;
+
     
     /**
-     * The handle on a Json consumer 
+     * The handle on a Json Slurper
      */
     ConfigSlurper config = new ConfigSlurper();
+    
     
     /**
      * Map-like structure after using handle on a Json consumer 
@@ -31,9 +40,8 @@ public class Checker{
     auth.user='server'
   }
   input {
-    path = '/Users/jimnorthrop/Dropbox/Projects/ConfigSlurper/resources/'
-    file = 'MadMax6.txt'
-    filename='/Users/jimnorthrop/Dropbox/Projects/ConfigSlurper/resources/MadMax6.txt'
+    path = "${configPath}"
+    file = "${configFile}"
   }
 }""".toString();
 
@@ -45,7 +53,15 @@ public class Checker{
     {
         say "Default constructor Checker.groovy"    
         config = new ConfigSlurper();  
-        dataObject = config.parse(payload);
+
+        try{
+	        dataObject = config.parse(payload);
+	    }
+	    catch (Exception e)
+	    {
+		    println "... parse() exception due to malformed JSON payload:"+e.message
+	    	throw new RuntimeException(e.message) 
+	    } // end of catch
 
         read(configFileName)    
         save(configFileName,payload);
@@ -53,15 +69,24 @@ public class Checker{
     
         
     /*
-     * Non-default constructor uses string name of a configuration file, if it exist
+     * Non-default constructor consumes a string name of a configuration file, excluding path, if it exist
      */
     public Checker(String fn)
     {
-        configFileName = System.getProperty("user.home") + File.separator  + fn; 
         configFile = fn;   
+        configFileName  = configPath + configFile;
+        
         say "Checker.groovy called to confirm file "+configFileName+" exists";    
         config = new ConfigSlurper();  
-        dataObject = config.parse(payload);
+
+        try{
+	        dataObject = config.parse(payload);
+	    }
+	    catch (Exception e)
+	    {
+		    println "... parse() exception due to malformed JSON payload:"+e.message
+	    	throw new RuntimeException(e.message) 
+	    } // end of catch
 
         read(configFileName)    
         save(configFileName,payload);
@@ -76,7 +101,7 @@ public class Checker{
         
         
      
-    // fill config text area from external file else default to skeleton
+    // fill config text area from external file, if it exists, else default to skeleton
     public read(String fn)
     {    
         def fi = new File(fn);
@@ -86,7 +111,14 @@ public class Checker{
         {
             say "... config.file "+fn+" exists - getting it's text";
             payload = fi.getText("UTF-8");
-            dataObject = config.parse(payload);
+	        try{
+		        dataObject = config.parse(payload);
+	    	}
+		    catch (Exception e)
+		    {
+		    	println "... parse() exception due to malformed JSON payload:"+e.message
+	    		throw new RuntimeException(e.message) 
+	    	} // end of catch
             println "------------------\npayload set to :"
             println payload
             println "------------------"
@@ -99,7 +131,7 @@ public class Checker{
     } // end of read    
 
 
-    // convenience method    
+    // convenience log method    
     def say(txt) { println txt; }
         
     /*
@@ -135,7 +167,15 @@ public class Checker{
         } // end of write    
         
         payload = data;
-        dataObject = config.parse(payload);
+        try{
+	        dataObject = config.parse(payload);
+	    }
+	    catch (Exception e)
+	    {
+		    println "... parse() exception due to malformed JSON payload:"+e.message
+	    	throw new RuntimeException(e.message) 
+	    }
+	    
         println "------------------\npayload set to :"
         println payload
         println "------------------"
@@ -144,6 +184,40 @@ public class Checker{
         return true;
     } // end of method
     
+        
+    // take key and see if it's in our ConfigObject.setup.input map    
+    public boolean hasInput(def k)
+    {
+        dataObject.with{
+        	setup.input.containsKey(k)
+        }
+    } // end of method
+     
+     
+    // use 'path' key and get it's value from our ConfigObject.setup.input map    
+    public getInputPath()
+    {
+		return getInput('path');
+    } // end of method
+
+
+    // use 'file' key and get it's value from our ConfigObject.setup.input map    
+    public getInputFile()
+    {
+		return getInput('file');
+    } // end of method
+
+
+    // use 'file' key and get it's value from our ConfigObject.setup.input map    
+    public getInputFileName()
+    {
+    	String p = getInput('path');
+    	String f = getInput('file');
+		return p + f;
+    } // end of method
+
+     
+    // take key and get it's value from our ConfigObject.setup.input map    
     public getInput(String ky)
     {
         dataObject.with {
@@ -152,17 +226,21 @@ public class Checker{
     } // end of method
 
 
+    // take key and insert this va into our ConfigObject.setup.input map sub-root    
     public boolean putInput(String ky, String va)
     {
         say "putInput("+ky+","+va+")"
         dataObject.with {
             setup.input.put(ky,va);
         }
+        
         payload = prettyPrint();
         say "putInput prettyPrint:"+payload
         save();
     } // end of method
 
+
+    // take key and insert this va into our ConfigObject.setup map root    
     public boolean put(String ky, String va)
     {
         dataObject.with {
@@ -187,23 +265,31 @@ public class Checker{
         println "Hello from Checker.groovy"
         Checker ck;
 
+		// sample test of alternate .config.json filename
         String cn = ".fred.json";
         ck = new Checker(cn);
         println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
         ck.putInput('path',ck.configPath);
         ck.putInput('file',ck.configFile);
         ck.putInput('filename',ck.configPath+ck.configFile);
+        println "... has setup.input.path ? " + ck.hasInput('path');
         println ck.payload;
-        println "\n-----------------------\nprettyPrint:\n"+ck.prettyPrint();
         
-/*        
+        println "... getInputPath()    : " + ck.getInputPath()
+        println "... getInputFile()    : " + ck.getInputFile()
+        println "... getInputFileName(): " + ck.getInputFileName()
+        
+        println "\n-----------------------\nprettyPrint:\n"+ck.prettyPrint();
+        println "\n-----------------------\n"
+
+		// normal test flow of .config.json filename
         if (args.size() > 0) 
         { 
             println "\n... checking config.file = "+args[0]+"\n"
             String cfn = args[0];
             ck = new Checker(cfn);
             println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
-            ck.save(ck.configFileName, "Hi kids\n");
+            ck.save(ck.configFileName, "setup { }");
         } 
         else 
         { 
@@ -214,7 +300,6 @@ public class Checker{
              println "path:"+ ck.getInput('path')
              ck.putInput('filename',ck.getInput('path') + '.fred.json');
         }
-*/
         ck.say "--- the end ---"        
     } // end of main 
 

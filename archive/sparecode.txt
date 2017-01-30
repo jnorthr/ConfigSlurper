@@ -1,0 +1,71 @@
+
+
+
+//==============================================================
+// spare code
+/*
+>>
+>> import groovy.json.*
+>>
+>> def options = JsonOutput.options()
+>>         .excludeNulls()
+>>         .excludeFieldsByName('make', 'country', 'record')
+>>         .excludeFieldsByType(Number)
+>>         .addConverter(URL) { url -> '"http://groovy-lang.org"' }
+>>
+>> StringWriter writer = new StringWriter()
+>> StreamingJsonBuilder builder = new StreamingJsonBuilder(writer, options)
+>>
+>> builder.records {
+>>     car {
+>>         name 'HSV Maloo'
+>>         make 'Holden'
+>>         year 2006
+>>         country 'Australia'
+>>         homepage new URL('http://example.org')
+>>         record {
+>>             type 'speed'
+>>             description 'production pickup truck with speed of 271kph'
+>>         }
+>>     }
+>> }
+>>
+>> assert writer.toString() == '{"records":{"car":{"name":"HSV
+>> Maloo","homepage":"http://groovy-lang.org"}}}'
+
+
+
+    public boolean tester1(def e)
+    {
+        say "tester1 --->"+e;
+        // Create Configurator slurper and set environment to local using text in config var.
+        configObject = createConfig(e).parse(configText)
+
+        assert configObject.mail.host == 'greenmail'
+        return (configObject.appMode == 'local')?true:false;
+    } // end of runner
+
+
+
+    // Try JSON parser
+    public  boolean tester2(def env)
+    {
+        say "tester2 --->"+env;
+        // -------------------------------
+        // new JSON parser improvements
+        def parser = new JsonSlurper().setType(LAX)
+
+        def conf = parser.parseText '''
+            // Configurator file
+            {
+                    // no quote for key, single quoted value
+                env: 'production'
+                # pound-style comment
+                'server': 5
+            }
+'''
+        say "parser config.env="+conf."${env}" // = production from prior json payload
+        return (conf."${env}" == 'production')?true:false;
+    } // end of method
+
+*/

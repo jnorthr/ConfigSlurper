@@ -90,8 +90,8 @@ Conceptually, a feature method consists of four phases:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
     	ck.configFileName == configPathName+".fred.json";
-		true == ck.save(ck.configFileName, "Hi kids\n");
-		ck.payload == "Hi kids\n"
+		true == ck.save(ck.configFileName, "setup { }");
+		ck.payload == "setup { }"
 		ck.configFileName.endsWith(".fred.json") == true;
   }
 

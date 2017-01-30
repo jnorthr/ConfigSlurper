@@ -25,7 +25,7 @@ ext{
 	vendor ='jnorthr'
 }
 
-defaultTasks 'clean', 'build','test','run1','run2', 'run'
+defaultTasks 'clean', 'build','test','run1','run2', 'run', 'runChecker', 'runChecker1'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -57,14 +57,20 @@ task run1(type: JavaExec) {
 task run2(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
-    args = ["${projectDir}/resources/sample.config"]
+    args = ["sample.config"] // simple filename only without any path pls. !
 }
 
 // run config.file existence checker task
 task runChecker(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Checker"
     classpath = sourceSets.main.runtimeClasspath
-    //args = [".fred.json"]
+}
+
+// run config.file existence checker task
+task runChecker1(type: JavaExec) {
+    main = "cloud.jnorthr.tools.configuration.Checker"
+    classpath = sourceSets.main.runtimeClasspath
+    args = [".fred.json"] // simple filename only without any path pls. !
 }
 
 

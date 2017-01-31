@@ -4,7 +4,7 @@ endif::[]
 
 = Configuration Tool
 Jnorthr <james.northrop@orange.fr>
-v0.1, 2016-09-25
+v0.1, 2017-01-25
 :icons: font
 :toc: left
 :imagesdir: images
@@ -16,7 +16,9 @@ v0.1, 2016-09-25
 NOTE: Travis Build Status for Master Branch: image:https://img.shields.io/travis/jnorthr/ConfigSlurper.svg[Build Status (Travis CI), link=https://travis-ci.org/jnorthr/ConfigSlurper]
 
 A skeleton project for groovy users. Clone includes gradle 3.1 build tool wrapper and folder structure like maven/gradle for use with JDK7+ (but not JDK6)
-even though the config code will run on JDK6+
+even though the config code will run on JDK7+
+
+Use this project jar as a configuration file maintenance tool. Reads and writes JSON-formatted text files.
 
 == Pre-requisites
 

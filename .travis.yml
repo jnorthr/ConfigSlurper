@@ -6,6 +6,7 @@ jdk:
 before_install:
 - chmod +x gradlew
 deploy:
+  edge: true
   provider: cloudfoundry
   api: https://api.aws.ie.a9s.eu
   username: james.b.northrop@googlemail.com

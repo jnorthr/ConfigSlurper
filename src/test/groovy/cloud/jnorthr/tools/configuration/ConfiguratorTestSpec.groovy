@@ -111,11 +111,12 @@ Conceptually, a feature method consists of four phases:
 
     when:
 		def ss = co.getInputFile()
-		
+		println "ss="+ss;
     then:
  		ss.endsWith(".fred.json") == true
   } // end of text
   
+/*    
   
   // Fifth Test
   def "5th Test: Setup Configurator to use 'prod' environment"() {
@@ -129,7 +130,6 @@ Conceptually, a feature method consists of four phases:
  		ss.endsWith(".fred.json") == true
   } // end of test
 
-/*    
   // Sixth Test
   def "6th Test: Setup Configurator to use 'local' environment"() {
     given:

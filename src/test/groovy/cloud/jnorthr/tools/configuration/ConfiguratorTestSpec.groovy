@@ -64,7 +64,7 @@ Conceptually, a feature method consists of four phases:
     	co != null;
     	co.ck.config != null
     	co.ck.dataObject != null
-    	co.ck.configFileName == "/Users/jimnorthrop/.config.json"
+    	co.ck.configFileName.endsWith(".config.json") == true
   } // end of test
 
 
@@ -82,7 +82,7 @@ Conceptually, a feature method consists of four phases:
     	// Change "==" to "!=" and see what's happening!
     	//def e = thrown(java.io.FileNotFoundException)
         //e.cause == null
-		co.configFile.endsWith("/Users/jimnorthrop/.configurator.json") == true 
+		co.configFile.endsWith(".configurator.json") == true 
   }
 
 

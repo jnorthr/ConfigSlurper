@@ -101,7 +101,6 @@ Conceptually, a feature method consists of four phases:
     	// Change "==" to "!=" and see what's happening!
 		ss == '/Users/jimnorthrop/'
   } // end of test
-*/
   
 
   // 4th Test
@@ -116,7 +115,6 @@ Conceptually, a feature method consists of four phases:
  		ss.endsWith(".fred.json") == true
   } // end of text
   
-/*    
   
   // Fifth Test
   def "5th Test: Setup Configurator to use 'prod' environment"() {

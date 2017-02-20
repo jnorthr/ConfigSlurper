@@ -18,6 +18,9 @@ class ConfigurationTestSpec extends Specification
   // fields
   Configurator co;
   	    
+  @Shared
+  String homePath
+  
   //static Logger log = Logger.getLogger(CacheManagerTestSpock.class.getName());
 
   // Fixture Methods
@@ -32,7 +35,16 @@ class ConfigurationTestSpec extends Specification
   def cleanup() {}
   
   // Note: The setupSpec() and cleanupSpec() methods may not reference instance fields.
-  def setupSpec() {}     // run before the first feature method
+  // run before the first feature method
+  def setupSpec() 
+  {
+  	homePath = System.getProperty("user.home") + File.separator;     new File(homePath+".configurator.json").delete()
+    new File(homePath+".configurator.json").delete()
+    new File(homePath+".configuratorTest7Spec.json").delete()
+    new File(homePath+".config.json").delete()
+    new File(homePath+".configuratorTestSpec2.json").delete()
+  }
+  
   def cleanupSpec() {}   // run after the last feature method}
 
 /*
@@ -70,12 +82,12 @@ Conceptually, a feature method consists of four phases:
 
 
   // 2nd Test
-  def "2nd Test: Set Configurator initial payload to bad JSON format"() {
+  def "2nd Test: Set Configurator constructor to a specific filename"() {
     given:
-	println "2nd Test: Set Configurator initial payload to bad JSON format"
+	println "2nd Test: Set Configurator constructor to a specific filename"
  
     when:
-		co = new Configurator("Fred");
+		co = new Configurator(".configuratorTestSpec2.json");
  
     then:
     	// Asserts are implicit and not need to be stated.
@@ -86,72 +98,78 @@ Conceptually, a feature method consists of four phases:
   }
 
 
-/*
   // 3rd Test
-  def "3rd Test: Ask appMode for 'prod' environment"() {
-    given:
-		println "3rd Test: Ask appName for 'prod' environment"        
+  def "3rd Test: make Configurator using default constructor"() {
+    given: "3rd Test: Confirm default input path is user.home value"        
 
     when:
-    	co = new Configurator(); 
 		def ss = co.getInputPath()
  
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-		ss == '/Users/jimnorthrop/'
+		ss == homePath;
   } // end of test
   
 
   // 4th Test
-  def "4th Test: Ask app for 'local' mail.host"() {
-    given:
-		println "4th Test: Ask app for 'local' mail.host"
-
+  def "4th Test: Check .defaultChecker.json is default filename"() {
+    given: "4th Test: Confirm default input file is named as expected"        
+    	co = new Configurator(); 
     when:
 		def ss = co.getInputFile()
-		println "ss="+ss;
     then:
- 		ss.endsWith(".fred.json") == true
+ 		ss == ".config.json"
   } // end of text
   
   
   // Fifth Test
-  def "5th Test: Setup Configurator to use 'prod' environment"() {
-    given:
-		println "5th Test: Setup Configurator to use 'prod' environment"
+  def "5th Test: Confirm full input file name is as expected"() {
+    given: "5th Test: Confirm full input filename is as expected"
  
     when:
+        println "... 5th Test: current input path is "+co.getInputPath()
+        println "... 5th Test: current input file is "+co.getInputFile()
+        println "... 5th Test: current input full filename is "+co.getInputFileName();
 		def ss = co.getInputFileName()
- 		println "path:"+co.getInputPath()
+
     then:
- 		ss.endsWith(".fred.json") == true
+ 		ss.endsWith(".config.json") == true
+
   } // end of test
 
+
   // Sixth Test
-  def "6th Test: Setup Configurator to use 'local' environment"() {
-    given:
-		println "6th Test: Setup Configurator to use 'local' environment"
+  def "6th Test: Confirm input path name is as expected"() {
+    given: "6th Test: Confirm input path name is as expected"
 
     when:
+        println "... current input path is "+co.getInputPath()
+        println "... current input file is "+co.getInputFile()
+        println "... current input full filename is "+co.getInputFileName();
 		def ss = co.getInputPath()
  
     then:
-		ss == "/Users/jimnorthrop/"
+		ss == homePath
   } // end of test
 
 
   // Seventh Test
-  def "7th Test: Confirm dump() of configObject yields correct values"() {
-    given:
-    	println "7th Test: Confirm dump() of configObject yields correct values";
- 		
+  def "7th Test: Construct specific config file and populate it"() {
+    given: "7th Test: Construct specific config file and populate it"
+		co = new Configurator(".configuratorTest7Spec.json");
+
     when:
-		def ss = co.getInputPath()
+		co.ck.putInput('path',"${homePath}Projects/ConfigSlurper/resources/");
+        co.ck.putInput('file',".scotch.json");
+        co.ck.putInput('filename',co.getInputFileName());
+        println "... current input path is "+co.getInputPath()
+        println "... current input file is "+co.getInputFile()
+        println "... current input full filename is "+co.getInputFileName();
  
     then:
-		ss == "/Users/jimnorthrop/"
+        co.getInputPath()== "${homePath}Projects/ConfigSlurper/resources/";
+        co.getInputFile()== ".scotch.json"
   } // end of test
-*/
 
 } // end of class

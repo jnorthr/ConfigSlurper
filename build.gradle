@@ -25,7 +25,7 @@ ext{
 	vendor ='jnorthr'
 }
 
-defaultTasks 'clean', 'build','test','run1','run2', 'run', 'runChecker', 'runChecker1'
+defaultTasks 'clean', 'build','test','run1','run2', 'run', 'runChecker', 'runChecker1', 'runProperty', 'runTool'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -37,7 +37,7 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // We use the latest groovy 2.x version for building this library
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
 
     // We use the awesome Spock testing and specification framework
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
@@ -57,20 +57,38 @@ task run1(type: JavaExec) {
 task run2(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
-    args = ["sample.config"] // simple filename only without any path pls. !
+    args = [".gradleRun2.config"] // simple filename only without any path pls. !
 }
 
+// run test properties file slurper
+// Feature to confirm a configuration file exists or build a simple one if it does not
+task runTool(type: JavaExec) {
+    main = "cloud.jnorthr.tools.configuration.ConfigTool"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// run java property file existence checker task
+// Feature to confirm a java property file exists or build a simple one if it does not
+task runProperty(type: JavaExec) {
+    main = "cloud.jnorthr.tools.configuration.PropertyTool"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+
 // run config.file existence checker task
+// Feature to confirm a configuration file exists or build a simple one if it does not
 task runChecker(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Checker"
     classpath = sourceSets.main.runtimeClasspath
 }
 
-// run config.file existence checker task
+
+// run config.file existence checker task with a single arg name for the configuration file being needed
+// Feature to confirm a configuration file exists or build a simple one if it does not
 task runChecker1(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Checker"
     classpath = sourceSets.main.runtimeClasspath
-    args = [".fred.json"] // simple filename only without any path pls. !
+    args = [".gradleRunChecker1.json"] // simple filename only without any path pls. !
 }
 
 
@@ -101,9 +119,10 @@ gradle.buildFinished { buildResult ->
 	println "BUILD FINISHED"
 	println "build failure - "+ buildResult?.failure
 }
+
 task succeed{
 	doLast{
-		println "Hello World"
+		println "task in build.gradle succeeded"
 	} // last
 } // end of succeed
 
@@ -113,3 +132,6 @@ task fail{
 	} // last
 } // end of fail
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}

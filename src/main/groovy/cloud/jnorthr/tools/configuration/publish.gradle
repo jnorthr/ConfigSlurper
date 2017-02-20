@@ -1,0 +1,92 @@
+// http://central.sonatype.org/pages/gradle.html - this How-To
+// https://docs.gradle.org/current/userguide/artifact_management.html (Gradle)
+// https://github.com/bintray/gradle-bintray-plugin#readme - Gradle Bintray Plugin readme 
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+//and hook them up into the artifacts collection together with the project jar itself:
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+//Signing Artifacts
+//The defined artifacts can be signed with
+signing {
+    sign configurations.archives
+}
+
+// Metadata Definition and Upload
+// To prepare for the actual upload, you have to define all the metadata with the help of the maven plugin. 
+// Group and version are set within the top level project, while the artifactId is configured for the archiveTask.
+group = "com.example.applications"
+archivesBaseName = "example-application"
+version = "1.4.7"
+
+// The generated pom file has to be signed and all signed artifacts then have to be uploaded. 
+// All this can be configured as part of the uploadArchives configuration.
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Example Application'
+        packaging 'jar'
+        // optionally artifactId can be defined here 
+        description 'A application used as an example on how to set up 
+          pushing  its components to the Central Repository.'
+        url 'http://www.example.com/example-application'
+
+        scm {
+          connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
+          developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
+          url 'http://foo.googlecode.com/svn/trunk/'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'manfred'
+            name 'Manfred Moser'
+            email 'manfred@sonatype.com'
+          }
+        }
+      }
+    }
+  }
+}
+
+// Credentials
+// The credentials for signing and upload can be stored in your gradle.properties file 
+// in your users home directory. The content would look like this
+signing.keyId=YourKeyId
+signing.password=YourPublicKeyPassword
+signing.secretKeyRingFile=PathToYourKeyRingFile
+
+ossrhUsername=your-jira-id
+ossrhPassword=your-jira-password

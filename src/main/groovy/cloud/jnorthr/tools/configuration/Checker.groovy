@@ -14,7 +14,8 @@ public class Checker{
 
     /**
      * This name points to a json-structured configuration name of a file where user values are stored between sessions.  
-     */    String configFile     = ".config.json";
+     */    
+     String configFile     = ".config.json";
 
     /**
      * This full file name, including path and filename, points to a json-structured configuration file where user values are stored between sessions.  
@@ -35,9 +36,9 @@ public class Checker{
 
     // Default JSON payloador JSON payload
     String payload = """setup {
-  mail {
-    host='smtp.myisp.com'
-    auth.user='server'
+  output {
+    path = "${configPath}"
+    file = "${configFile}"
   }
   input {
     path = "${configPath}"
@@ -134,6 +135,8 @@ public class Checker{
     // convenience log method    
     def say(txt) { println txt; }
         
+    // ----------------------------------------------------------------------------------
+
     /*
      * Save a string of data to a writer as external UTF-8 file for already loaded file
      */
@@ -184,8 +187,10 @@ public class Checker{
         return true;
     } // end of method
     
+    // ----------------------------------------------------------------------------------
         
-    // take key and see if it's in our ConfigObject.setup.input map    
+        
+    // take key and see if it's in our JSON ConfigObject.setup.input sub-map    
     public boolean hasInput(def k)
     {
         dataObject.with{
@@ -208,12 +213,10 @@ public class Checker{
     } // end of method
 
 
-    // use 'file' key and get it's value from our ConfigObject.setup.input map    
+    // use two keys to form a resulting whole filename    
     public getInputFileName()
     {
-    	String p = getInput('path');
-    	String f = getInput('file');
-		return p + f;
+		return getInputPath()+getInputFile();
     } // end of method
 
      
@@ -225,6 +228,86 @@ public class Checker{
         }
     } // end of method
 
+
+    // ----------------------------------------------------------------------------------
+        
+        
+    // take key and see if it's in our JSON ConfigObject.setup.output sub-map    
+    public boolean hasOutput(def k)
+    {
+        dataObject.with{
+        	setup.output.containsKey(k)
+        }
+    } // end of method
+     
+     
+    // use 'path' key and get it's value from our ConfigObject.setup.output map    
+    public getOutputPath()
+    {
+		return getOutput('path');
+    } // end of method
+
+
+    // use 'file' key and get it's value from our ConfigObject.setup.output map    
+    public getOutputFile()
+    {
+		return getOutput('file');
+    } // end of method
+
+
+    // use two keys to form a resulting whole filename    
+    public getOutputFileName()
+    {
+		return getOutputPath()+getOutputFile();
+    } // end of method
+
+     
+    // take key and get it's value from our ConfigObject.setup.output map    
+    public getOutput(String ky)
+    {
+        dataObject.with {
+            setup.output.get(ky);
+        }
+    } // end of method
+
+
+    // ----------------------------------------------------------------------------------
+     
+    // take key and get it's value from our ConfigObject.setup map ROOT    
+    public get(String ky)
+    {
+        dataObject.with {
+            setup.get(ky);
+        }
+    } // end of method
+
+
+	// This method inserts new properties at the ROOT of the json tree
+    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-json closure 
+    public boolean put(String ky, String va)
+    {
+        dataObject.with {
+            setup.put(ky,va);
+        }
+        payload = prettyPrint();
+        save();
+    } // end of method
+
+
+	// This method inserts new objects, i.e. dates,numbers,etc at the ROOT of the json tree
+    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-json closure 
+    public boolean put(String ky, Object va)
+    {
+        dataObject.with {
+            setup.put(ky,va);
+        }
+        payload = prettyPrint();
+        save();
+    } // end of method
+
+
+    // ----------------------------------------------------------------------------------
+     
 
     // take key and insert this va into our ConfigObject.setup.input map sub-root    
     public boolean putInput(String ky, String va)
@@ -240,13 +323,16 @@ public class Checker{
     } // end of method
 
 
-    // take key and insert this va into our ConfigObject.setup map root    
-    public boolean put(String ky, String va)
+    // take key and insert this va into our ConfigObject.setup.output map sub-root    
+    public boolean putOutput(String ky, String va)
     {
+        say "putOutput("+ky+","+va+")"
         dataObject.with {
-            setup.put(ky,va);
+            setup.output.put(ky,va);
         }
+        
         payload = prettyPrint();
+        say "putOutput prettyPrint:"+payload
         save();
     } // end of method
 
@@ -266,23 +352,30 @@ public class Checker{
         Checker ck;
 
 		// sample test of alternate .config.json filename
-        String cn = ".fred.json";
+        String cn = ".checkerAltConfig.json";
         ck = new Checker(cn);
         println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
+        
         ck.putInput('path',ck.configPath);
         ck.putInput('file',ck.configFile);
-        ck.putInput('filename',ck.configPath+ck.configFile);
+        ck.putOutput('path',ck.configPath);
+        ck.putOutput('file',ck.configFile);
+        
         println "... has setup.input.path ? " + ck.hasInput('path');
         println ck.payload;
         
         println "... getInputPath()    : " + ck.getInputPath()
         println "... getInputFile()    : " + ck.getInputFile()
         println "... getInputFileName(): " + ck.getInputFileName()
+        println "... getOutputPath()    : " + ck.getOutputPath()
+        println "... getOutputFile()    : " + ck.getOutputFile()
+        println "... getOutputFileName(): " + ck.getOutputFileName()
         
         println "\n-----------------------\nprettyPrint:\n"+ck.prettyPrint();
         println "\n-----------------------\n"
 
-		// normal test flow of .config.json filename
+
+		// normal test flow of .config.json filename with a single argument from the build.gradle script
         if (args.size() > 0) 
         { 
             println "\n... checking config.file = "+args[0]+"\n"
@@ -296,9 +389,15 @@ public class Checker{
              println "... default constructor checking default config.name"
              ck = new Checker(); 
              println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
-             ck.putInput('file','.fred.json');
+             
+             ck.putInput('file','.defaultChecker.json');
              println "path:"+ ck.getInput('path')
-             ck.putInput('filename',ck.getInput('path') + '.fred.json');
+             ck.putOutput('file','.defaultChecker.json');
+             println "path:"+ ck.getOutput('path')
+             
+             ck.put("mobile","07855769321"); // insert key into root of json tree
+             ck.save();
+             ck.prettyPrint();
         }
         ck.say "--- the end ---"        
     } // end of main 

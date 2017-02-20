@@ -52,7 +52,16 @@ public class Configurator{
     // convenience method    
     def say(txt) { println txt; }
     
+    /*
+     * Asks checker to return current value of given key
+     */
+    public get(String key)
+    {
+		ck.get(key)
+	} // end of method
         
+    // =============================================================================    
+
     /*
      * Asks checker to return current value of the input path
      */
@@ -76,15 +85,53 @@ public class Configurator{
      */
     public getInputFileName()
     {
-		ck.getInputFileName();
+		return ck.getInput('path')+ck.getInput('file')
 	} // end of method
+	
+    // =============================================================================    
+
+    /*
+     * Asks checker to return current value of the output path
+     */
+    public getOutputPath()
+    {
+		ck.getOutput('path')
+	} // end of method
+	
+	
+    /*
+     * Asks checker to return current value of the output file
+     */
+    public getOutputFile()
+    {
+		ck.getOutput('file')
+	} // end of method
+	
+	
+    /*
+     * Asks checker to return current value of the output full filename
+     */
+    public getOutputFileName()
+    {
+		return ck.getOutput('path')+ck.getOutput('file')
+	} // end of method
+	
+
+    /*
+     * Asks checker to store current value for given key
+     */
+    public putInput(String key, String va)
+    {
+		ck.putInput(key,va);
+	} // end of method
+		
 		        
     // =============================================================================    
     /**
      * The primary method to execute this class. Can be used to test and examine logic and performance issues. 
      * 
      * argument is a list of strings provided as command-line parameters. 
-     * Value 1 can be simple name of config.file without path, i.e. .fred.json
+     * Value 1 can be simple name of config.file without path, i.e. .abcd.json
      * 
      * @param  args a list of possibly zero entries from the command line
      */
@@ -103,15 +150,27 @@ public class Configurator{
             println "... current input path is "+c.getInputPath()
             println "... current input file is "+c.getInputFile()
             println "... current input full filename is "+c.getInputFileName();
+            
+            c.ck.putOutput('file','.configuratorNonDefault.json');
+            println "... current output path is "+c.getOutputPath()
+            println "... current output file is "+c.getOutputFile()
+            println "... current output full filename is "+c.getOutputFileName()
         } 
+
         else 
         {     
             println "... running default constructor"
             c = new Configurator(); 
-            c.ck.putInput('file','.fred.json');
+            
+            c.ck.putInput('file','.configuratorDefault.json');
             println "... current input path is "+c.getInputPath()
             println "... current input file is "+c.getInputFile()
             println "... current input full filename is "+c.getInputFileName()
+            
+            c.ck.putOutput('file','.configuratorDefault.json');
+            println "... current output path is "+c.getOutputPath()
+            println "... current output file is "+c.getOutputFile()
+            println "... current output full filename is "+c.getOutputFileName()
         }
 
         println "";

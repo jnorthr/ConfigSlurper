@@ -1,40 +1,41 @@
 // need imports to parse JSON samples bottom of this script
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
 /*
- * Feature to confirm a configuration file exists or build a simple one if it does not
+ * Feature to confirm a groovy configuration script file exists or build a simple one if it does not
  */
 public class Checker{
 
     /**
-     * These default names point to a json-structured configuration cache where user values are stored between sessions.  
+     * These default names point to a groovy script-structured configuration cache where user values are stored between sessions.  
      */
     String configPath     = System.getProperty("user.home") + File.separator;
 
 
     /**
-     * This name points to a json-structured configuration name of a file where user values are stored between sessions.  
+     * This name points to a groovy script-structured configuration name of a file where user values are stored between sessions.  
      */    
-     String configFile     = ".config.json";
+     String configFile     = "checker.config";
 
     /**
-     * This full file name, including path and filename, points to a json-structured configuration file where user values are stored between sessions.  
+     * This full file name, including path and filename, points to a groovy script-structured configuration file where user values are stored between sessions.  
      */
     String configFileName = configPath + configFile;
 
     
     /**
-     * The handle on a Json Slurper
+     * The handle on a groovy ConfigSlurper
      */
     ConfigSlurper config = new ConfigSlurper();
     
     
     /**
-     * Map-like structure after using handle on a Json consumer 
+     * Map-like structure after using handle on a groovy script consumer 
      */
     groovy.util.ConfigObject dataObject;
 
-    // Default JSON payloador JSON payload
+
+    // Default groovy script config payload
     String payload = """setup {
   output {
     path = "${configPath}"
@@ -60,7 +61,7 @@ public class Checker{
 	    }
 	    catch (Exception e)
 	    {
-		    println "... parse() exception due to malformed JSON payload:"+e.message
+		    println "... parse() exception due to malformed groovy script payload:"+e.message
 	    	throw new RuntimeException(e.message) 
 	    } // end of catch
 
@@ -85,7 +86,7 @@ public class Checker{
 	    }
 	    catch (Exception e)
 	    {
-		    println "... parse() exception due to malformed JSON payload:"+e.message
+		    println "... parse() exception due to malformed groovy script payload:"+e.message
 	    	throw new RuntimeException(e.message) 
 	    } // end of catch
 
@@ -117,16 +118,17 @@ public class Checker{
 	    	}
 		    catch (Exception e)
 		    {
-		    	println "... parse() exception due to malformed JSON payload:"+e.message
+		    	println "... parse() exception due to malformed groovy script payload:"+e.message
 	    		throw new RuntimeException(e.message) 
 	    	} // end of catch
+	    	
             println "------------------\npayload set to :"
             println payload
             println "------------------"
         }
         else
         {
-            say "... config.file "+fn+" does not exists, will build it."
+            say "... groovy config script "+fn+" does not exists, will build it."
             save(fn,payload);
         }
     } // end of read    
@@ -152,7 +154,7 @@ public class Checker{
      */
     public boolean save(String data)
     {
-        println "... saving data only";
+        println "... saving script data only";
         save(configFileName,data);
     } // end of method
         
@@ -175,7 +177,7 @@ public class Checker{
 	    }
 	    catch (Exception e)
 	    {
-		    println "... parse() exception due to malformed JSON payload:"+e.message
+		    println "... parse() exception due to malformed groovy script payload:"+e.message
 	    	throw new RuntimeException(e.message) 
 	    }
 	    
@@ -190,7 +192,7 @@ public class Checker{
     // ----------------------------------------------------------------------------------
         
         
-    // take key and see if it's in our JSON ConfigObject.setup.input sub-map    
+    // take key and see if it's in our groovy ConfigSlurper ConfigObject.setup.input sub-map    
     public boolean hasInput(def k)
     {
         dataObject.with{
@@ -232,7 +234,7 @@ public class Checker{
     // ----------------------------------------------------------------------------------
         
         
-    // take key and see if it's in our JSON ConfigObject.setup.output sub-map    
+    // take key and see if it's in our groovy ConfigSlurper ConfigObject.setup.output sub-map    
     public boolean hasOutput(def k)
     {
         dataObject.with{
@@ -282,8 +284,8 @@ public class Checker{
     } // end of method
 
 
-	// This method inserts new properties at the ROOT of the json tree
-    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-json closure 
+	// This method inserts new properties at the ROOT of our ConfigSlurper object tree
+    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-groovy script closure 
     public boolean put(String ky, String va)
     {
         dataObject.with {
@@ -294,8 +296,8 @@ public class Checker{
     } // end of method
 
 
-	// This method inserts new objects, i.e. dates,numbers,etc at the ROOT of the json tree
-    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-json closure 
+	// This method inserts new objects, i.e. dates,numbers,etc at the ROOT of our ConfigSlurper object tree
+    // take key and insert this va into our ConfigObject.setup{} map root - NOT into the 'input' sub-groovy script closure 
     public boolean put(String ky, Object va)
     {
         dataObject.with {
@@ -344,15 +346,15 @@ public class Checker{
       * argument is a list of strings provided as command-line parameters. 
       * 
       * @param  args a list of possibly zero entries from the command line; first arg[0] if present, is
-      *         taken as a simple file name of a json-structured configuration file;
+      *         taken as a simple file name of a groovy script-structured configuration file;
       */
     public static void main(String[] args)
     {
         println "Hello from Checker.groovy"
         Checker ck;
 
-		// sample test of alternate .config.json filename
-        String cn = ".checkerAltConfig.json";
+		// sample test of alternate .config filename
+        String cn = ".checkerAlternate.config";
         ck = new Checker(cn);
         println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
         
@@ -375,10 +377,10 @@ public class Checker{
         println "\n-----------------------\n"
 
 
-		// normal test flow of .config.json filename with a single argument from the build.gradle script
+		// normal test flow of groovy script.config filename with a single argument from the build.gradle script
         if (args.size() > 0) 
         { 
-            println "\n... checking config.file = "+args[0]+"\n"
+            println "\n... checking .config = "+args[0]+"\n"
             String cfn = args[0];
             ck = new Checker(cfn);
             println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
@@ -386,19 +388,24 @@ public class Checker{
         } 
         else 
         { 
-             println "... default constructor checking default config.name"
+             println "... default constructor checker.config"
              ck = new Checker(); 
+
              println "... file "+ck.configFileName+" contains "+ck.payload.size()+" bytes";
              
-             ck.putInput('file','.defaultChecker.json');
+             ck.putInput('file','.default.config');
              println "path:"+ ck.getInput('path')
-             ck.putOutput('file','.defaultChecker.json');
+
+             ck.putOutput('file','.default.config');
              println "path:"+ ck.getOutput('path')
              
-             ck.put("mobile","07855769321"); // insert key into root of json tree
+			 // insert key into root of ConfigObject tree
+             ck.put("mobile","07855769321"); 
              ck.save();
+             
              ck.prettyPrint();
         }
+        
         ck.say "--- the end ---"        
     } // end of main 
 

@@ -1,4 +1,4 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.properties;
 /*
  * Feature to maintain java properties files, that they exist and/or build a simple one if it does not
  */
@@ -180,7 +180,7 @@ public class PropertyTool
       */
     public static void main(String[] args)
     {
-        println "-- starting ConfigTool() ---"
+        println "-- starting PropertyTool() ---"
             
         println "-- load java properties config ---"    
         def ct = new PropertyTool();

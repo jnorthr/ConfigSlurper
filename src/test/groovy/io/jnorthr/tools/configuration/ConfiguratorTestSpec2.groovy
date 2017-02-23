@@ -1,10 +1,10 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
 /*
 * see: http://code.google.com/p/spock/wiki/SpockBasics
 * A spock test wrapper around the base class
 */
-import cloud.jnorthr.tools.configuration.Configurator;
+import io.jnorthr.tools.configuration.Configurator;
 import java.util.logging.Logger;
 import spock.lang.*
 import java.text.SimpleDateFormat;
@@ -31,12 +31,9 @@ class ConfigurationTestSpec2 extends Specification
   // Both run before the first feature method
   def setupSpec() 
   {
-  	homePath = System.getProperty("user.home") + File.separator;; 
+	  	homePath = System.getProperty("user.home") + File.separator;
     	new File(homePath+".config.json").delete()
-    	new File(homePath+".configuratorTestSpec2Test1.json").delete()
     	new File(homePath+".configurator.json").delete()
-    	
-    	new File( homePath +  ".configuratorTestSpec2Test2.json").delete()
   }
   
   // run after the last feature method}
@@ -59,11 +56,12 @@ class ConfigurationTestSpec2 extends Specification
     then:
     	new File(homePath+".configuratorTestSpec2Test1.json").exists() == true
         co.getInputPath()== homePath;
-        co.getInputFile()== ".config.json"
+        co.getInputFile()== "checker.config"
   } // end of test
 
   def "2nd Test: ConfigurationTestSpec2"() {
     given: "2nd Test: Construct specific config file and populate it"
+    	new File(homePath+".configuratorTestSpec2Test2.json").delete()
 		co = new Configurator(".configuratorTestSpec2Test2.json");
 
     when:
@@ -92,34 +90,13 @@ class ConfigurationTestSpec2 extends Specification
         println "... 3rd: cell number in ROOT is "+co.ck.get('cell');
  
     then:
-    	new File(homePath+".config.json").exists() == true
+    	new File(homePath+"checker.config").exists() == true
         co.ck.get('cell')== "004478557654321"
   } // end of test
 
+
   def "4th Test: ConfigurationTestSpec2"() {
-    given: "4th Test: Populate mobile phone in standard config file"
-		co = new Configurator();
-
-    when:
-        co.ck.put('cell',"00447654321");
- 
-    then:
-        co.get('cell')== "00447654321"
-  } // end of test
-
-  def "5th Test: ConfigurationTestSpec2"() {
-    given: "5th Test: Put mobile phone number in standard config file"
-		co = new Configurator();
-
-    when:
-        co.ck.put('cell',00447654321);
- 
-    then:
-        co.get('cell')== 00447654321
-  } // end of test
-
-  def "6th Test: ConfigurationTestSpec2"() {
-    given: "6th Test: Put date field in standard config file"
+    given: "4th Test: Put date field in standard config file"
 		co = new Configurator();
 		SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz" );
         TimeZone tz = TimeZone.getTimeZone( "UTC" );
@@ -129,7 +106,7 @@ class ConfigurationTestSpec2 extends Specification
     	def dt = new Date();        
 
         String output = df.format( dt );
-        println "ConfigurationTestSpec2 Test 6:"+output;
+        println "ConfigurationTestSpec2 Test 4:"+output;
         co.ck.put('date',"${output}");
         co.ck.put('flag',true);
  

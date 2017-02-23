@@ -1,10 +1,10 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
 /*
 * see: http://code.google.com/p/spock/wiki/SpockBasics
 * A spock test wrapper around the base class
 */
-import cloud.jnorthr.tools.configuration.Configurator;
+import io.jnorthr.tools.configuration.*;
 import java.util.logging.Logger;
 import spock.lang.*
 import java.lang.*;
@@ -15,7 +15,7 @@ class CheckerTestSpec extends Specification
   Checker ck;
   
   @Shared
-  String configPathName  	    
+  String homePath  	    
 
   // Fixture Methods
   
@@ -31,32 +31,32 @@ class CheckerTestSpec extends Specification
   // Note: The setupSpec() and cleanupSpec() methods may not reference instance fields.
   def setupSpec() 
   {
-     String other = System.getProperty("user.home")
+     homePath = System.getProperty("user.home") + File.separator;
 
-/*
+/* fix for windows
      String os = System.getProperty('os.name').toLowerCase();
      def i = os.indexOf('windows');
      if (i > -1)
      {
      	println "os="+os+ " and i="+i;
- 	//other = other.replaceAll(/\\/, '\/')
-	String token ="";
-	for (char ch: other.toCharArray()) 
-	{
-		print ch;token+=ch; 
-		print Character.getNumericValue(ch);
-		print ' ';
-	}
-	println "\nand token=${token} and other="+other;
+ 		//homePath = homePath.replaceAll(/\\/, '\/')
+		String token ="";
+		for (char ch: homePath.toCharArray()) 
+		{
+			print ch;
+			token+=ch; 
+			print Character.getNumericValue(ch);
+			print ' ';
+		}
+
+		println "\nand token=${token} and homePath="+homePath;
      } 
 */
-     configPathName = other + File.separator;
-     //configPathName.replace("\\", "/");
-     println "configPathName="+     configPathName;
   } // run before the first feature method
   
   
   def cleanupSpec() {}   // run after the last feature method}
+
 
 /*
 Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to find in the system under specification. By convention, feature methods are named with String literals. Try to choose good names for your feature methods, and feel free to use any characters you like!
@@ -76,47 +76,53 @@ Conceptually, a feature method consists of four phases:
   // First Test
   def "1st Test: Setup Checker for default path"() {
     given:
-	println "1st Test: Setup Checker for default path"
+		println "1st Test: Setup Checker for default path"
+	  	new File(homePath+"checker.config").delete()
  
     when:
-	ck = new Checker();  
+		ck = new Checker();  
     then:
-	// Asserts are implicit and not need to be stated.
-    // Change "==" to "!=" and see what's happening!
-    ck.configFileName == configPathName+".config.json";
+		// Asserts are implicit and not need to be stated.
+    	true == new File(homePath+"checker.config").exists()
+    	// Change "==" to "!=" and see what's happening!
+    	ck.configFileName == homePath+"checker.config";
   } // end of test
 
 
 
   // 2nd Test
-  def "2nd Test: Set Checker initial config filename to .checkerTestSpec2.json"() {
+  def "2nd Test: Set Checker initial config filename to .checkerTestSpec2.config"() {
     given:
-	println "2nd Test: Set Checker initial config filename to .checkerTestSpec2"
+		println "2nd Test: Set Checker initial config filename to .checkerTestSpec2"
+	  	new File(homePath+".checkerTestSpec2.config").delete()
  
     when:
-	ck = new Checker(".checkerTestSpec2.json");
+		ck = new Checker(".checkerTestSpec2.config");
  
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-    	ck.configFileName == configPathName+".checkerTestSpec2.json";
+    	true == new File(homePath+".checkerTestSpec2.config").exists()
+    	ck.configFileName == homePath+".checkerTestSpec2.config";
   }
 
   // 3rd Test
   def "3rd Test: Use config filename .checkerTestSpec3 to save Hi kids"() {
     given:
-	println "3rd Test: Use config filename .checkerTestSpec3 to save Hi kids"
+		println "3rd Test: Use config filename .checkerTestSpec3 to save Hi kids"
+	  	new File(homePath+".checkerTestSpec3.config").delete()
  
     when:
-	ck = new Checker(".checkerTestSpec3.json");
+		ck = new Checker(".checkerTestSpec3.config");
  
     then:
     	// Asserts are implicit and not need to be stated.
+    	true == new File(homePath+".checkerTestSpec3.config").exists()
     	// Change "==" to "!=" and see what's happening!
-    	ck.configFileName == configPathName+".checkerTestSpec3.json";
+    	ck.configFileName == homePath+".checkerTestSpec3.config";
 		true == ck.save(ck.configFileName, "setup { }");
 		ck.payload == "setup { }"
-		ck.configFileName.endsWith(".checkerTestSpec3.json") == true;
+		ck.configFileName.endsWith(".checkerTestSpec3.config") == true;
   }
 
 } // end of spec

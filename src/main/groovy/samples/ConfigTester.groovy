@@ -1,4 +1,5 @@
-package cloud.jnorthr.tools.configuration;
+import io.jnorthr.tools.configuration.*;
+
 public class ConfigTester{
 
     public static void main(String[] args)

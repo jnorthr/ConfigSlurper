@@ -7,13 +7,6 @@
  * user guide available at https://docs.gradle.org/3.1/userguide/tutorial_groovy_projects.html
  */
 
-// this plugin offers build scan reporting when gradlew -Dscan
-// to produce https://gradle.com/s/w4kwpvbnsu5ek link in an email they send to you if you do
-// one-at-a-time builds; probably good for big projects ?
-plugins {
-  id "com.gradle.build-scan" version "1.1.1"
-}
-buildScan { licenseAgreementUrl = 'https://gradle.com/terms-of-service'; licenseAgree = 'yes' }
 
 // Apply the groovy plugin to add support for Groovy
 apply plugin: 'groovy'
@@ -25,7 +18,7 @@ ext{
 	vendor ='jnorthr'
 }
 
-defaultTasks 'clean', 'build','test','run1','run2', 'run', 'runChecker', 'runChecker1', 'runProperty', 'runTool'
+defaultTasks 'clean', 'build','test', 'runJSON' //'runChecker', 'runChecker1','run1','run2', 'run', 'runProperty', 'runTool'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -67,10 +60,23 @@ task runTool(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-// run java property file existence checker task
+// run java property file existence task
 // Feature to confirm a java property file exists or build a simple one if it does not
 task runProperty(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.PropertyTool"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// run groovy JSON consumer tool
+// Feature to maintain a JSON file that exists or build a simple one if it does not
+task runJSON(type: JavaExec) {
+    main = "cloud.jnorthr.tools.configuration.JSONTool"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// run main method
+task runSample(type: JavaExec) {
+    main = "ConfigTester"
     classpath = sourceSets.main.runtimeClasspath
 }
 
@@ -88,7 +94,7 @@ task runChecker(type: JavaExec) {
 task runChecker1(type: JavaExec) {
     main = "cloud.jnorthr.tools.configuration.Checker"
     classpath = sourceSets.main.runtimeClasspath
-    args = [".gradleRunChecker1.json"] // simple filename only without any path pls. !
+    args = [".gradleRunChecker1.config"] // simple filename only without any path pls. !
 }
 
 

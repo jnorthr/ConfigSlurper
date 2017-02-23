@@ -1,4 +1,4 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 // see: http://groovy.codehaus.org/ConfigSlurper
 //  or http://mrhaki.blogspot.fr/2009/08/grassroots-groovy-configuration-with.html
 

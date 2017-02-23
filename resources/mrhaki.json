@@ -1,0 +1,9 @@
+{
+    "message": {
+        "header": {
+            "from": "mrhaki",
+            "to": ["Groovy Users", "Java Users"]
+        },
+        "body": "http://mrhaki.blogspot.fr/2011/04/groovy-goodness-parse-json-with.html"
+    }
+} 

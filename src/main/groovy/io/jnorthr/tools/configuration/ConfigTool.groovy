@@ -1,13 +1,17 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
-// see: http://groovy.codehaus.org/ConfigSlurper
-//  or http://mrhaki.blogspot.fr/2009/08/grassroots-groovy-configuration-with.html
+/*
+	See: http://groovy.codehaus.org/ConfigSlurper
+    or http://mrhaki.blogspot.fr/2009/08/grassroots-groovy-configuration-with.html
 
-/* log.properties
+	Groovy ConfigSlurper reads groovy scripts styled like JSON but more flexible; these are different from Java properties files
+	or JSON formatted text. The result of a parse() method is a ConfigObject which is a kind of Map.
+	
+	- log.properties
     see: http://blog.andresteingress.com/2013/10/24/groovy-quick-tip-the-groovy-util-logging-package/
     log.info "running ConfigTool() default constructor"
     //new File('/Volumes/FHD-XS/TextEditor/TextEditor/editordata/log.properties').toURL()
-*/
+
 
 
 // Had to write as a class as configSlurper won't work as script
@@ -16,7 +20,6 @@ package cloud.jnorthr.tools.configuration;
 // ConfigSlurper scripts support native Java types and are structured like a tree.
 // Below is an example of how you could configure Log4j with a ConfigSlurper script:
 import groovy.util.ConfigSlurper;
-//import groovy.util.logging.*
 import java.net.*;
 import java.util.*;
 import groovy.util.*;
@@ -26,47 +29,74 @@ import java.util.Properties;
 import java.awt.*
 import javax.swing.JOptionPane;
 
+//import groovy.util.logging.Slf4j
+//import groovy.util.logging.*
 //import groovy.util.logging.Log4j
-import groovy.util.logging.Log
 //import org.apache.log4j.Level
 
 /*
- * Feature to maintain configuration files, that they exist and/or build a simple one if it does not
+ * Feature to maintain groovy configuration script files, that they exist and/or build a simple one if it does not
  */
-@Log
+//@Slf4j(value = 'LOGGER')
 public class ConfigTool
 {
     /**
      * These default names point to a json-structured configuration cache where user values are stored between sessions.  
      */
-    final static String homePath     = System.getProperty("user.home") + File.separator + "Dropbox" + File.separator;
+    final static String homePath     = System.getProperty("user.home") + File.separator;
 
 
     /**
-     * Skeleton properties to use if no external file exists or cannot be found 
+     * Skeleton groovy config script to use if no external file exists or cannot be found 
      */
-    def outlineLog = """log4j.appender.stdout = "org.apache.log4j.ConsoleAppender"
+    def defaultScript = """logging {
+log4j.appender.stdout = "org.apache.log4j.ConsoleAppender"
 log4j.appender."stdout.layout"="org.apache.log4j.PatternLayout"
 log4j.rootLogger="error,stdout"
 log4j.logger.org.springframework="info,stdout"
 log4j.additivity.org.springframework=false
-path=${homePath}
+}
+
+path='${homePath}'
+// Dot notation.
+mail.hostname = 'localhost' 
+ 
+// Scoped closure notation.
+mail { 
+    // Using Groovy constructs.
+    ['user', 'password'].each {
+        this."${it}" = 'secret'
+    }
+}
+ 
+// Environments section.
+environments {
+    dev {
+        mail.hostname = 'local'
+    }
+    test {
+        mail.hostname = 'test'
+    }
+    prod {
+        mail.hostname = 'prod'
+    }
+}
 """.toString();
 
     /**
      * Indirect method to print to sysout 
      */
-    def say = System.out.&println;
+    def say = { System.out.&println;  }
     
     
     /**
-     * Full name of the java environment file with path 
+     * Full name of the groovy script configuration environment file with path 
      */
-    String es = homePath+'resources/.environment.properties';
+    String es = homePath+'resources/.environment.config';
 
 
     /**
-     * File handle using full name of the environment file with path
+     * File handle using full name of the environment script with path
      */
     File ef = new File(es);
 
@@ -78,7 +108,7 @@ path=${homePath}
 
     
     /**
-     * Full name of the log file configuration settings with path
+     * Full name of the java properties log file with path
      */
     String us = 'resources/.log.properties';
 
@@ -152,7 +182,7 @@ path=${homePath}
             else
             {
                 newConfig(uun)
-                configObject = slurper.parse(outlineLog);
+                configObject = slurper.parse(defaultScript);
             } // end of else
             
         } // end of else        
@@ -200,7 +230,7 @@ path=${homePath}
             {
                 newConfig(nm)
                 nmh = new File(nm);
-                configObject = slurper.parse(outlineLog);
+                configObject = slurper.parse(defaultScript);
             } // end of else
         } // end of else
         
@@ -214,15 +244,17 @@ path=${homePath}
 /*
 Special "environments" Configuration
 
-The ConfigSlurper class has a special constructor other than the default constructor that takes an "environment" parameter. 
+The groovy script ConfigSlurper class has a special constructor other than the default constructor that takes an "environment" parameter. 
+
 This special constructor works in concert with a property setting called environments. This allows a default setting to 
 exist in the property file that can be over-written by a setting in a specific environment closure. This allows multiple 
-related configurations to be stored in the same file. Note: the environments closure is not directly parsable. Without 
-using the special environment constructor the closure is ignored.
+related configurations to be stored in the same file. 
+
+Note: the environments closure is not directly parsable. Without using the special environment constructor the closure is ignored.
 */
 
     /*
-     * Non-Default constructor builds/or confirms existence of an environment in the default configuration file
+     * Non-Default constructor builds/or confirms existence of a specific environment in the default groovy configuration script file
      *
      * @param  env  identifies the environment to influence which set of settings are in force; like 'live','test', "development" 
      */
@@ -294,7 +326,7 @@ using the special environment constructor the closure is ignored.
         {
             say "this property file already exists:"+newConfigFileName;
             //currentConfigFileName = nh.canonicalPath
-            showPanel("Decline to Over-write","""${newConfigFileName} already exists - Will NOT over-write it, so keeping !\n${currentConfigFileName}""".toString());
+            showPanel("Decline to Over-write","""${newConfigFileName} already exists - Will NOT over-write it,\nso keeping ${currentConfigFileName}\nas properties""".toString());
             return true
         } // end of if
 
@@ -333,10 +365,8 @@ using the special environment constructor the closure is ignored.
      *
      * @param  newConfigFileName String value of full path+filename of new output file
      */
-    def writeConfig(String newconfigfilename)
-    {
-        String filename = homePath + newconfigfilename;
-        
+    def writeConfig(String filename)
+    {        
         //def configObject = new ConfigSlurper().parse(u)
         new File(filename).withWriter { writer ->
              configObject.writeTo(writer)
@@ -455,7 +485,7 @@ using the special environment constructor the closure is ignored.
     {
         println "-- starting ConfigTool() ---"
             
-        println "-- load config ---"    
+        println "-- test default config ---"    
         def ct = new ConfigTool();
 
         println "-- add font ---"    
@@ -464,11 +494,11 @@ using the special environment constructor the closure is ignored.
 
         println "-- add color ---"    
         ct.set('colors.red','#ff0000')
-
         println "   color now="+ct.get('colors.red');
         
-        println "-- add fred --"    
-        def fn = "resources/.fred.properties"
+        
+        println "\n-- test resources/.fred.config ---"    
+        def fn = "resources/.fred.config"
         ct = new ConfigTool(fn,true);
         println "-- set fred to blue --"
 
@@ -494,25 +524,29 @@ using the special environment constructor the closure is ignored.
         ct.writeConfig()        
         println "   fred now="+ct.get('fred');
 
-        println "-- load config for 'development' ---"    
+        println "\n-- load config for 'development' ---"    
         ct = new ConfigTool("development");
 
-        println "-- loaded configObject for 'development' ---"    
+        println "\n-- loaded configObject for 'development' ---"    
         println "   fred now="+ct.get('fred');
 
 
-        fn = "resources/.freetext.properties"
+        println "\n-- test resources/.freetext.config ---"    
+        fn = "resources/.freetext.config"
         ct = new ConfigTool(fn,true);
         ct.set('font.face','courier')
         println "   font.face now="+ct.get('font.face');
         ct.writeConfig()        
     
-        fn = "resources/.sometext.properties"
+
+        println "\n-- test resources/.sometext.config ---"    
+        fn = ct.homePath+"resources/.sometext.config"
+        new File(fn).delete()
         if ( ct.newConfig(fn) )
         {
             ct.set('name','value 1')
-            ct.rewriteConfig(ct.config)                
-            ct.set('environment', "[name:'bloggs']" )
+            ct.rewriteConfig(fn)                
+            ct.set('environment', "[name:bloggs]" )
             ct.rewriteConfig()                
         } // end of if
 

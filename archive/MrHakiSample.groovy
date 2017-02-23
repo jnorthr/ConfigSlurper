@@ -1,5 +1,5 @@
 // Configuration script as String, but can also be URL, file.
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.*;
 import java.io.File;
 
 public class MrHakiSample{

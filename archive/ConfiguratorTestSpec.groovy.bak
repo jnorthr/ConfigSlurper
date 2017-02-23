@@ -1,10 +1,10 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
 /*
 * see: http://code.google.com/p/spock/wiki/SpockBasics
 * A spock test wrapper around the base class
 */
-import cloud.jnorthr.tools.configuration.Configurator;
+import io.jnorthr.tools.configuration.Configurator;
 //import CacheEntry;
 //import groovy.transform.Canonical
 //import groovy.transform.ToString

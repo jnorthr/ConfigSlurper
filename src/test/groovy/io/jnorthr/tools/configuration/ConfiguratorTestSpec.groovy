@@ -1,10 +1,10 @@
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 
 /*
 * see: http://code.google.com/p/spock/wiki/SpockBasics
 * A spock test wrapper around the base class
 */
-import cloud.jnorthr.tools.configuration.Configurator;
+import io.jnorthr.tools.configuration.Configurator;
 import java.util.logging.Logger;
 import spock.lang.*
 
@@ -38,11 +38,7 @@ class ConfigurationTestSpec extends Specification
   // run before the first feature method
   def setupSpec() 
   {
-  	homePath = System.getProperty("user.home") + File.separator;     new File(homePath+".configurator.json").delete()
-    new File(homePath+".configurator.json").delete()
-    new File(homePath+".configuratorTest7Spec.json").delete()
-    new File(homePath+".config.json").delete()
-    new File(homePath+".configuratorTestSpec2.json").delete()
+  	homePath = System.getProperty("user.home") + File.separator;     
   }
   
   def cleanupSpec() {}   // run after the last feature method}
@@ -66,6 +62,7 @@ Conceptually, a feature method consists of four phases:
   def "1st Test: Setup Configurator for default path"() {
     given:
 		println "1st Test: Setup Configurator for default path"
+	  	new File(homePath+".configurator.json").delete()
  
     when:
         co = new Configurator(); 
@@ -76,7 +73,7 @@ Conceptually, a feature method consists of four phases:
     	co != null;
     	co.ck.config != null
     	co.ck.dataObject != null
-    	co.ck.configFileName.endsWith(".config.json") == true
+    	co.ck.configFileName.endsWith("checker.config") == true
   } // end of test
 
 
@@ -84,7 +81,8 @@ Conceptually, a feature method consists of four phases:
   // 2nd Test
   def "2nd Test: Set Configurator constructor to a specific filename"() {
     given:
-	println "2nd Test: Set Configurator constructor to a specific filename"
+		println "2nd Test: Set Configurator constructor to a specific filename"
+	  	new File(homePath+".configuratorTestSpec2.json").delete()
  
     when:
 		co = new Configurator(".configuratorTestSpec2.json");
@@ -101,63 +99,29 @@ Conceptually, a feature method consists of four phases:
   // 3rd Test
   def "3rd Test: make Configurator using default constructor"() {
     given: "3rd Test: Confirm default input path is user.home value"        
-
+		println "3rd Test: Use new Configurator for default path"
+	  	new File(homePath+".configurator.json").delete()
+ 
     when:
-		def ss = co.getInputPath()
+        co = new Configurator(); 
+		def sp = co.getInputPath()
+		def ss = co.getInputFile()
  
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
-		ss == homePath;
+		sp == homePath;
+ 		ss == "checker.config"
   } // end of test
   
 
-  // 4th Test
-  def "4th Test: Check .defaultChecker.json is default filename"() {
-    given: "4th Test: Confirm default input file is named as expected"        
-    	co = new Configurator(); 
-    when:
-		def ss = co.getInputFile()
-    then:
- 		ss == ".config.json"
-  } // end of text
-  
-  
-  // Fifth Test
-  def "5th Test: Confirm full input file name is as expected"() {
-    given: "5th Test: Confirm full input filename is as expected"
- 
-    when:
-        println "... 5th Test: current input path is "+co.getInputPath()
-        println "... 5th Test: current input file is "+co.getInputFile()
-        println "... 5th Test: current input full filename is "+co.getInputFileName();
-		def ss = co.getInputFileName()
-
-    then:
- 		ss.endsWith(".config.json") == true
-
-  } // end of test
 
 
-  // Sixth Test
-  def "6th Test: Confirm input path name is as expected"() {
-    given: "6th Test: Confirm input path name is as expected"
-
-    when:
-        println "... current input path is "+co.getInputPath()
-        println "... current input file is "+co.getInputFile()
-        println "... current input full filename is "+co.getInputFileName();
-		def ss = co.getInputPath()
- 
-    then:
-		ss == homePath
-  } // end of test
-
-
-  // Seventh Test
-  def "7th Test: Construct specific config file and populate it"() {
-    given: "7th Test: Construct specific config file and populate it"
-		co = new Configurator(".configuratorTest7Spec.json");
+  // Forth Test
+  def "4th Test: Construct specific config file and populate it"() {
+    given: "4th Test: Construct specific config file and populate it"
+	  	new File(homePath+".configuratorTest4Spec.json").delete()
+		co = new Configurator(".configuratorTest4Spec.json");
 
     when:
 		co.ck.putInput('path',"${homePath}Projects/ConfigSlurper/resources/");

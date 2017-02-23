@@ -1,5 +1,5 @@
 // need imports for JSON parsing bottom of this script
-package cloud.jnorthr.tools.configuration;
+package io.jnorthr.tools.configuration;
 import groovy.json.*
 import static groovy.json.JsonParserType.*
 

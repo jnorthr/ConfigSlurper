@@ -1,6 +1,6 @@
 // https://examples.javacodegeeks.com/jvm-languages/groovy/groovy-json-example/
-//package cloud.jnorthr.tools.configuration;
-package com.javacodegeeks.example.groovy.json;
+package io.jnorthr.tools.json;
+//package com.javacodegeeks.example.groovy.json;
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput

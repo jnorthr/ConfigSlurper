@@ -2,16 +2,26 @@
 package io.jnorthr.tools.configuration;
 import groovy.json.*
 import static groovy.json.JsonParserType.*
+import io.jnorthr.toolkit.*;
 
 /*
  * Features to consume application configuration variables
  */
 public class Configurator{
 
-    String configFile = System.getProperty("user.home") + File.separator  +".configurator.json";
+    String homePath;
+    
+    String configFile = homePath +".configurator.json";
 
     // Handle to confirm the external configuration file exists
     Checker ck;
+
+
+    /**
+     * This is logic to get the name of the home folder used by this user.  
+     */
+    PathFinder pf = new PathFinder();
+    
 
     /*
      * Default constructor mounts the default configuration payload, pointing to the 'prod' environment
@@ -21,6 +31,8 @@ public class Configurator{
     public Configurator()
     {
         say "Default constructor Configurator.groovy"    
+        homePath = pf.getHomePath();
+		
         ck = new Checker();
     } // end of default constructor
     
@@ -30,7 +42,9 @@ public class Configurator{
      */
     public Configurator(File fn)
     {
-        say "Configurator.groovy constructor using a File"    
+        say "Configurator.groovy constructor using a File"  
+		homePath = pf.getHomePath();
+		          
         String configFile = fn.getAbsolutePath();
         say "... using ${configFile} file as input"
         
@@ -45,6 +59,8 @@ public class Configurator{
     public Configurator(String fn)
     {
         say "Configurator.groovy constructor to read payload from file "+fn;    
+		homePath = pf.getHomePath();
+		
         ck = new Checker(fn);
     } // end of non-default constructor
 
@@ -67,7 +83,7 @@ public class Configurator{
      */
     public getInputPath()
     {
-		ck.getInput('path')
+		ck.getInput('path');
 	} // end of method
 	
 	

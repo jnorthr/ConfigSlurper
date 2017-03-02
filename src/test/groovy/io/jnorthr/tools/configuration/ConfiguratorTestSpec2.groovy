@@ -8,6 +8,7 @@ import io.jnorthr.tools.configuration.Configurator;
 import java.util.logging.Logger;
 import spock.lang.*
 import java.text.SimpleDateFormat;
+import io.jnorthr.toolkit.PathFinder;
 
 class ConfigurationTestSpec2 extends Specification 
 {
@@ -26,12 +27,14 @@ class ConfigurationTestSpec2 extends Specification
 
   // run after every feature method
   def cleanup() {}
-  
+
   // Note: The setupSpec() and cleanupSpec() methods may not reference instance fields.
   // Both run before the first feature method
   def setupSpec() 
   {
-	  	homePath = System.getProperty("user.home") + File.separator;
+	    PathFinder pf = new PathFinder();
+	    homePath = pf.getHomePath();
+
     	new File(homePath+".config.json").delete()
     	new File(homePath+".configurator.json").delete()
   }
@@ -45,6 +48,7 @@ class ConfigurationTestSpec2 extends Specification
   // First Test
   def "1st Test: ConfigurationTestSpec2"() {
     given: "1st Test: Construct specific config file, ck existence and path name"
+        println "1st Test: Construct specific config file, ck existence and path name"
     	new File(homePath+".configuratorTestSpec2Test1.json").delete()
 		co = new Configurator(".configuratorTestSpec2Test1.json");
 
@@ -56,7 +60,7 @@ class ConfigurationTestSpec2 extends Specification
     then:
     	new File(homePath+".configuratorTestSpec2Test1.json").exists() == true
         co.getInputPath()== homePath;
-        co.getInputFile()== "checker.config"
+        co.getInputFile()== ".configuratorTestSpec2Test1.json"
   } // end of test
 
   def "2nd Test: ConfigurationTestSpec2"() {
@@ -90,7 +94,7 @@ class ConfigurationTestSpec2 extends Specification
         println "... 3rd: cell number in ROOT is "+co.ck.get('cell');
  
     then:
-    	new File(homePath+"checker.config").exists() == true
+    	new File(homePath+".checker.config").exists() == true
         co.ck.get('cell')== "004478557654321"
   } // end of test
 

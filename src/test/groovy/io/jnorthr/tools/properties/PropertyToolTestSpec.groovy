@@ -5,6 +5,8 @@ package io.jnorthr.tools.properties;
 * A spock test wrapper around the base class
 */
 import io.jnorthr.tools.configuration.*;
+import io.jnorthr.toolkit.PathFinder;
+
 import java.util.logging.Logger;
 import spock.lang.*
 import java.text.SimpleDateFormat;
@@ -16,7 +18,7 @@ class PropertyToolTestSpec extends Specification
   	    
   @Shared
   String homePath
-  
+
   
   // Fixture Methods
   // run before every feature method
@@ -31,7 +33,8 @@ class PropertyToolTestSpec extends Specification
   // Both run before the first feature method
   def setupSpec() 
   {
-     homePath = System.getProperty("user.home") + File.separator;
+		PathFinder pf = new PathFinder();
+	    homePath = pf.getHomePath();
   }
 
   

@@ -1,22 +1,29 @@
-ifdef::env-github[]
-:note-caption: :information_source:
-endif::[]
-
-= Configuration Tool
+= Configuration Tool README
 Jnorthr <james.northrop@orange.fr>
-v0.1, 2017-01-25
+v0.2, 2017-02-25
 :icons: font
 :toc: left
 :imagesdir: images
 :sectlinks:
 :sectnums:
+ifdef::env-github[]
+:note-caption: :information_source:
+endif::[]
 
 == Status
 
 NOTE: Travis Build Status for Master Branch: image:https://img.shields.io/travis/jnorthr/ConfigSlurper.svg[Build Status (Travis CI), link=https://travis-ci.org/jnorthr/ConfigSlurper]
 
-A skeleton project for groovy users. Clone includes gradle 3.1 build tool wrapper and folder structure like maven/gradle for use with JDK7+ (but not JDK6)
-even though the config code will run on JDK7+
+A skeleton project for groovy users. Clone includes gradle 3.4 build tool wrapper and folder structure like maven/gradle for use with JDK7+ (but not JDK6)
+even though the config code will run on JDK6+
+
+''''
+
+IMPORTANT: Bug to fix: if no config file found by Checker module 1st time thru, home path within gstring is set to null b4dummy is built
+
+''''
+
+NOTE: at io.jnorthr.tools.json.JSONTool.main(JSONTool.groovy:215) - cannot invoke get() on null obj @ln#89
 
 Use this project jar as a configuration file maintenance tool. Reads and writes JSON-formatted text files.
 

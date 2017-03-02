@@ -1,10 +1,15 @@
 package io.jnorthr.tools.json;
+import io.jnorthr.toolkit.PathFinder;
+
 import groovy.json.*
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput;
 import static groovy.json.JsonParserType.LAX as RELAX
 import static groovy.json.JsonParserType.INDEX_OVERLAY
+
 // http://grails.asia/groovy-xmlslurper-examples-for-parsing-xml[Groovy Code Fragments]
+
 /*
 http://grails.asia/groovy-create-xml-document-examples[CML Docs Create]
 http://grails.asia/groovy-map-tutorial[Map Tutorial]
@@ -28,8 +33,13 @@ public class JSONTool
     /**
      * This variable holds name of user home directory.  
      */
-    final static String homePath = System.getProperty("user.home") + File.separator;
+    String homePath;
 
+    /**
+     * This is logic to get the name of the home folder used by this user.  
+     */
+    PathFinder pf;
+    
 
     /**
      * This variable holds complete name of JSON-formatted text file.  
@@ -43,6 +53,10 @@ public class JSONTool
      */
     public JSONTool()
     { 
+    	pf = new PathFinder();
+        homePath = pf.getHomePath();
+        fn = homePath+".config.json";
+        say "JSONTool() constructor set fn="+fn;
         loader();
     } // end of constructor
     
@@ -54,6 +68,8 @@ public class JSONTool
      */
     public JSONTool(String alternateFileName)
     { 
+    	pf = new PathFinder();
+        homePath = pf.getHomePath();
         fn = homePath + alternateFileName;
         loader();
     } // end of constructor
@@ -107,18 +123,26 @@ public class JSONTool
     def update(String reason)
     {
         try 
-        {            
+        {      
+        	say "trying to update fn="+fn;      
             File file = new File(fn);
             FileOutputStream fileOut = new FileOutputStream(file);
             json.store(fileOut, reason);
             fileOut.close();            
         } 
-        catch (IOException ex) 
+        catch (Exception ex) 
         {
             ex.printStackTrace();
         } // end of catch        
-    } // end of loader
+    } // end of update
 
+    
+    /*
+     *  convenience log method
+     *
+     * @param  txt the output for sysout
+     */
+    def say(txt) { println txt; }
 
     /*
      *  pull in a json-formatted text file
@@ -127,21 +151,49 @@ public class JSONTool
     {
         try 
         {
-            //load a json-formatted text file structure
-            def jsonText = new FileInputStream(fn).text;
-            //json = new JsonSlurper().setType(RELAX).parseText(jsonText)
-            def parser = new JsonSlurper().setType(JsonParserType.LAX)
-      		json = (Map)parser.parseText(jsonText)
+        	say "trying to load fn="+fn;      
+        	def defaultText = "{ "root" : "here" }"
+        	def json = new JsonBuilder()
+        	
+            String jsonText = defaultText;  //new JsonBuilder(defaultText).toPrettyString();
+			say "--------\njsonText:"+jsonText+"\n----------------"
+		
+        	def fi = new File(fn);
+        	if (!fi.exists())
+        	{
+        		say "JSON File ${fn} does not exist"
+        		// Or a writer object:
+				fi.withWriter('UTF-8') { writer ->
+    				writer.write( jsonText )
+    			}
+        		say "JSON File ${fn} created"
+        	} // end of if
+
+        	else
+        	{
+	            //load a json-formatted text file structure
+    	        jsonText = fi.text;        	
+        	} // end of if/else
+        	
+            say "jsonText has ${jsonText.size()} bytes"
+            
+            json = new JsonSlurper().setType(RELAX).parseText(jsonText)
+            //def parser = new JsonSlurper().setType(JsonParserType.LAX)
+
+      		say "json ok with jsonText of ${jsonText.size()} bytes"
+      		//json = (Map)parser.parseText(jsonText)
+      		say "json ok with jsonText of ${jsonText.size()} bytes"
       		assert json instanceof Map
-	        println "--- json instanceof Map ---"
+	        say "--- json instanceof Map ---"
         } 
-        catch (IOException ex) 
+        catch (Exception ex) 
         {
-            update("Initial Build");
-            say "missing json file ${fn} has been created"
+        	say "JSONTool loader() exception:"+ex.message+" for filenamed:"+fn;;
+            //update("Initial Build");
+            say "missing json file ${fn} has not been created"
         } // end of catch
         
-        println "--- end of loader() ---"
+        say "--- end of loader() ---"
     } // end of loader
 
 

@@ -1,4 +1,5 @@
 package io.jnorthr.tools.configuration;
+import io.jnorthr.toolkit.PathFinder;
 
 /*
 	See: http://groovy.codehaus.org/ConfigSlurper
@@ -43,9 +44,8 @@ public class ConfigTool
     /**
      * These default names point to a json-structured configuration cache where user values are stored between sessions.  
      */
-    final static String homePath     = System.getProperty("user.home") + File.separator;
-
-
+    String homePath;
+    
     /**
      * Skeleton groovy config script to use if no external file exists or cannot be found 
      */
@@ -150,11 +150,19 @@ environments {
     String currentConfigFileName 
     
 
+    /**
+     * This is logic to get the name of the home folder used by this user.  
+     */
+    PathFinder pf = new PathFinder();
+    
+
     /*
      * Default constructor builds/or confirms existence of the default configuration file 'resources/.log.properties'
      */
     public ConfigTool()
     { 
+		homePath = pf.getHomePath();
+		
         // To load this into a readable configObject you can do:
         if (uu.exists())
         {
@@ -201,6 +209,8 @@ environments {
      */
     public ConfigTool(String fn, boolean flag)
     {
+		homePath = pf.getHomePath();
+
         String nm = homePath + fn;
         // To load this into a readable config you can do:
         def nmh = new File(nm)
@@ -260,6 +270,8 @@ Note: the environments closure is not directly parsable. Without using the speci
      */
     public ConfigTool(String env)  
     { 
+		homePath = pf.getHomePath();
+
         // To load this into a readable config you can do:
         slurper = new ConfigSlurper(env)
         configObject = slurper.parse(e);

@@ -1,6 +1,25 @@
 // sample JSON parser
 import groovy.json.*
-def fn = "C:\\Users\\Jim\\Dropbox\\bookmarks-2013-04-30.json"
+
+  // replace windows \ values in homePath with /
+  def replacement = 
+  {
+  	// Change \\ to /
+    if (it == '\\') 
+    {
+        '/'
+    }
+    // Do not transform
+    else {
+        null
+    }
+  } // end of replacement
+
+
+def  homePath = System.getProperty("user.home") + File.separator;
+     homePath = homePath.collectReplacements(replacement);
+
+def fn = "${homePath}bookmarks-2013-04-30.json"
 def txt = new File(fn).text
 println txt;
 println "--------------------\n"

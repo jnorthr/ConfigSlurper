@@ -18,7 +18,7 @@ ext{
 	vendor ='jnorthr'
 }
 
-defaultTasks 'clean', 'build','test', 'runJSON' //'runChecker', 'runChecker1','run1','run2', 'run', 'runProperty', 'runTool'
+defaultTasks 'clean', 'getJars', 'build','test', 'runJSON', 'run1','run2', 'run', 'runProperty', 'runTool'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -29,26 +29,42 @@ repositories {
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
+    compile fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
+    runtime fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
+    testCompile fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
+    testRuntime fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
+
     // We use the latest groovy 2.x version for building this library
-    compile 'org.codehaus.groovy:groovy-all:2.4.8'
+    compile 'org.codehaus.groovy:groovy-all:2.4.9'
 
     // We use the awesome Spock testing and specification framework
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'
 }
 
-mainClassName = "cloud.jnorthr.tools.configuration.Configurator"
+mainClassName = "io.jnorthr.tools.configuration.Configurator"
+
+task getJars { 
+  def destDir = "$projectDir/src/main/libs" //  Adds/encapsulates a dynamic property within task for O-O
+  doFirst { 
+    copy { 
+      from '../Tools/build/libs'
+      from '../Chooser/build/libs'
+      into destDir 
+	} 
+  } 
+}
 
 // run main method
 task run1(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.Configurator"
+    main = "io.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 
 // feed gradle projectDir value as first parameter
 task run2(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.Configurator"
+    main = "io.jnorthr.tools.configuration.Configurator"
     classpath = sourceSets.main.runtimeClasspath
     args = [".gradleRun2.config"] // simple filename only without any path pls. !
 }
@@ -56,21 +72,21 @@ task run2(type: JavaExec) {
 // run test properties file slurper
 // Feature to confirm a configuration file exists or build a simple one if it does not
 task runTool(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.ConfigTool"
+    main = "io.jnorthr.tools.configuration.ConfigTool"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 // run java property file existence task
 // Feature to confirm a java property file exists or build a simple one if it does not
 task runProperty(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.PropertyTool"
+    main = "io.jnorthr.tools.properties.PropertyTool"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 // run groovy JSON consumer tool
 // Feature to maintain a JSON file that exists or build a simple one if it does not
 task runJSON(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.JSONTool"
+    main = "io.jnorthr.tools.json.JSONTool"
     classpath = sourceSets.main.runtimeClasspath
 }
 
@@ -78,23 +94,6 @@ task runJSON(type: JavaExec) {
 task runSample(type: JavaExec) {
     main = "ConfigTester"
     classpath = sourceSets.main.runtimeClasspath
-}
-
-
-// run config.file existence checker task
-// Feature to confirm a configuration file exists or build a simple one if it does not
-task runChecker(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.Checker"
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-
-// run config.file existence checker task with a single arg name for the configuration file being needed
-// Feature to confirm a configuration file exists or build a simple one if it does not
-task runChecker1(type: JavaExec) {
-    main = "cloud.jnorthr.tools.configuration.Checker"
-    classpath = sourceSets.main.runtimeClasspath
-    args = [".gradleRunChecker1.config"] // simple filename only without any path pls. !
 }
 
 
@@ -109,7 +108,7 @@ jar.doFirst{
                 "Implementation-Title"  : appName,
                 "Implementation-Version": codeversion,
                 "Implementation-Vendor" : vendor,
-                "Main-Class"            : "cloud.jnorthr.tools.configuration.Configurator",
+                "Main-Class"            : "io.jnorthr.tools.configuration.Configurator",
                 "Built-By"				: System.properties['user.name'],
                 "Class-Path"            : configurations.compile.collect { it.getName() }.join(' ')
                 //"Build-Date"            : buildDate,
@@ -139,5 +138,5 @@ task fail{
 } // end of fail
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '3.4'
 }

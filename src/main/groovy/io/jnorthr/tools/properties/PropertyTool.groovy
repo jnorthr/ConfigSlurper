@@ -1,4 +1,6 @@
 package io.jnorthr.tools.properties;
+import io.jnorthr.toolkit.PathFinder;
+
 /*
  * Feature to maintain java properties files, that they exist and/or build a simple one if it does not
  */
@@ -7,14 +9,18 @@ public class PropertyTool
     /**
      * This variable holds name of user home directory.  
      */
-    final static String homePath     = System.getProperty("user.home") + File.separator;
-
+    String homePath;
+    
 
     /**
      * This variable holds complete name of user property file.  
      */
     String fn = homePath+".config.properties";
         
+    /**
+     * This variable is a handle to user home folder.  
+     */
+	PathFinder pf = new PathFinder();
 
     /**
      * This variable holds handle to a java-formatted Property file.  
@@ -26,6 +32,7 @@ public class PropertyTool
      */
     public PropertyTool()
     { 
+        homePath = pf.getHomePath();
         loader();
     } // end of constructor
     
@@ -36,15 +43,16 @@ public class PropertyTool
      */
     public PropertyTool(String alternateFileName)
     { 
+        homePath = pf.getHomePath();
         fn = homePath + alternateFileName;
         loader();
     } // end of constructor
+
     
     /**
      * Indirect method to print to sysout 
      */
     def say = System.out.&println;
-
     
     /*
      *  check if a path property exists in a java property file

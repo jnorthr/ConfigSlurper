@@ -1,4 +1,5 @@
 package io.jnorthr.tools.configuration;
+import io.jnorthr.toolkit.PathFinder;
 
 /*
 * see: http://code.google.com/p/spock/wiki/SpockBasics
@@ -21,6 +22,7 @@ class ConfigurationTestSpec extends Specification
   @Shared
   String homePath
   
+
   //static Logger log = Logger.getLogger(CacheManagerTestSpock.class.getName());
 
   // Fixture Methods
@@ -38,7 +40,8 @@ class ConfigurationTestSpec extends Specification
   // run before the first feature method
   def setupSpec() 
   {
-  	homePath = System.getProperty("user.home") + File.separator;     
+     PathFinder pf = new PathFinder();
+     homePath = pf.getHomePath();
   }
   
   def cleanupSpec() {}   // run after the last feature method}
@@ -73,7 +76,7 @@ Conceptually, a feature method consists of four phases:
     	co != null;
     	co.ck.config != null
     	co.ck.dataObject != null
-    	co.ck.configFileName.endsWith("checker.config") == true
+    	co.ck.configFileName.endsWith(".checker.config") == true
   } // end of test
 
 
@@ -103,18 +106,18 @@ Conceptually, a feature method consists of four phases:
 	  	new File(homePath+".configurator.json").delete()
  
     when:
-        co = new Configurator(); 
-		def sp = co.getInputPath()
+        co = new Configurator();
+        def sp = co.getInputPath() // Checker fails to register home path if no config file found 1st time, but ok after that coz it's saved 1st time around
 		def ss = co.getInputFile()
- 
+ 		println "... sp="+sp;
+ 		println "... ss="+ss;
+ 		
     then:
     	// Asserts are implicit and not need to be stated.
     	// Change "==" to "!=" and see what's happening!
 		sp == homePath;
- 		ss == "checker.config"
+ 		ss == ".default.config" || ".checker.config"
   } // end of test
-  
-
 
 
   // Forth Test

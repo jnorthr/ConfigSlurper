@@ -1,17 +1,16 @@
 language: groovy
 jdk:
 - oraclejdk8
-- oraclejdk7
-- openjdk7
+- openjdk8
 before_install:
 - chmod +x gradlew
 deploy:
   edge: true
   provider: cloudfoundry
   api: https://api.aws.ie.a9s.eu
-  username: james.b.northrop@googlemail.com
+  username: j.northrop@hotmail.com
   password:
-    secure: JKO9ZhnWGVTr3kYM+1HOpPk+KQki2nrXcl8r8HInNp/BH0U7YAQx2hWsbZ260SCfEtiwF1x3tfdAt1duebJzQv4etFNE6V5amvEA7Ic2frg9JhoKa+XzJIjxZMgF6Cbh2GxRSljOYpydUiNHOG/LOPiTen4Wopjyk5ZTsUIodAiQ1/hBTj7dFgo8mUPPaW4mZwOe8gZYIbuz7MDTVvH2hYxuTHW3tenIiUMaUmwOpWukFpmzPtE2TeYG8mJ28Ii5nZFDDSLgIibkGOjuFs3TY6WYnIDCAKoFg1G3MlaB/ZBBpd2eIMBQFrZ30cmwbtHwOuQegU04Dwcy2HWG57D+YUMvQmpBfP80sKwjsjAMH10WzkgjQ4v/X00DmpvRPuGRGtJojAnvlXfPmNjZotboWtiqxlIIrLc7++tEpAWh4GDSpYykOjQvhwcYV1AgpBRYRN5HCEmBuMKdE6x8f8ruePxQseAEUNwtDoBugcIXIWnE1p+i8k7TqN+G/OWUIH3n7nV/YZZwmIZFTvXSTcMT2XaoL9XGLfJIN4fvT6TrXWMo3PMZf5vDb3NYJ+vVKD7xjf1Ec0D88oyQ0BSnCCEP5WD8DhtaS35FS2HPOrpDvnEcSV7gfbhc3/8GCIIommz6rPlJYYjD8xZF4wn9C8L2seRGChc9EJzxaOMYQMya98s=
+    secure: 
   organization: james_b_northrop_googlemail_com
   space: test
   on:

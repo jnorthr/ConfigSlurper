@@ -35,7 +35,7 @@ dependencies {
     testRuntime fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
 
     // We use the latest groovy 2.x version for building this library
-    compile 'org.codehaus.groovy:groovy-all:2.4.9'
+    compile 'org.codehaus.groovy:groovy-all:2.4.14'
 
     // We use the awesome Spock testing and specification framework
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
@@ -100,7 +100,7 @@ task runSample(type: JavaExec) {
 jar.doFirst{
       manifest {
             attributes(
-                "Manifest-Version"      : '1.0',
+                "Manifest-Version"      : '0.3',
                 "Created-By"            : vendor,
                 "Specification-Title"   : appName,
                 "Specification-Version" : codeversion,
@@ -138,5 +138,5 @@ task fail{
 } // end of fail
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4'
+    gradleVersion = '4.7'
 }

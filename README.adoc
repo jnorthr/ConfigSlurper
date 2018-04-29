@@ -1,6 +1,6 @@
 = Configuration Tool README
 Jnorthr <james.northrop@orange.fr>
-v0.2, 2017-02-25
+v0.2, 2018-02-25
 :icons: font
 :toc: left
 :imagesdir: images

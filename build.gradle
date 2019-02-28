@@ -18,6 +18,7 @@ ext{
 	vendor ='jnorthr'
 }
 
+// runScript
 defaultTasks 'clean', 'getJars', 'build','test', 'runJSON', 'run1','run2', 'run', 'runProperty', 'runTool'
 
 // In this section you declare where to find the dependencies of your project
@@ -25,21 +26,24 @@ repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
+    mavenLocal()
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
+    compile localGroovy() 
     compile fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
     runtime fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
     testCompile fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
     testRuntime fileTree(dir: "$projectDir/src/main/libs", include: ['*.jar'])
 
     // We use the latest groovy 2.x version for building this library
-    compile 'org.codehaus.groovy:groovy-all:2.4.14'
+    compile 'org.codehaus.groovy:groovy-all:2.5.6'
 
     // We use the awesome Spock testing and specification framework
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:5.0'
 }
 
 mainClassName = "io.jnorthr.tools.configuration.Configurator"
@@ -97,6 +101,14 @@ task runSample(type: JavaExec) {
 }
 
 
+// [2] Create a task of type 'JavaExec', referencing a Groovy script and any input arguments. 
+task runScript(type: JavaExec) { 
+    description 'Run a Groovy script to sync the environment config registry with the properties files in source control' 
+    classpath = sourceSets.main.runtimeClasspath 
+    main = "io.jnorthr.tools.configuration.JsonBuilder"
+} 
+
+
 jar.doFirst{
       manifest {
             attributes(
@@ -137,6 +149,8 @@ task fail{
 	} // last
 } // end of fail
 
+/*
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
+    gradleVersion = '5.2.1'
 }
+*/

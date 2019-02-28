@@ -1,53 +1,61 @@
-= Configuration Tool README
-Jnorthr <james.northrop@orange.fr>
-v0.2, 2018-02-25
-:icons: font
-:toc: left
-:imagesdir: images
+= README
+jnorthr <james.northrop@orange.fr>
+V1.1, Updated 25 Mar.2018: ReadMe Notes
+:sectanchors:
 :sectlinks:
-:sectnums:
-ifdef::env-github[]
-:note-caption: :information_source:
-endif::[]
+:icons: font
+:allow-uri-read:
+:imagesdir: ./images
+:linkattrs:
+:linkcss:
+:toc: right
+:toc-title: Document Index
+:source-highlighter: coderay
+:docslink: http://gpars.org/[GPars Documentation]
+:description: This is a wonderful.
+
+include::_includes/navbar2.txt[]
 
 == Status
 
-NOTE: Travis Build Status for Master Branch: image:https://img.shields.io/travis/jnorthr/ConfigSlurper.svg[Build Status (Travis CI), link=https://travis-ci.org/jnorthr/ConfigSlurper]
-
-A skeleton project for groovy users. Clone includes gradle 3.4 build tool wrapper and folder structure like maven/gradle for use with JDK7+ (but not JDK6)
-even though the config code will run on JDK6+
+*Travis C/I* Project Health -
+image:https://img.shields.io/travis/jnorthr/DoctorPepper.svg[Build Status (Travis CI), link=https://travis-ci.org/jnorthr/DoctorPepper]  image:https://img.shields.io/hexpm/l/plug.svg[Apache License, link=https://github.com/jnorthr/DoctorPepper/blob/master/LICENSE]
 
 ''''
 
-IMPORTANT: Bug to fix: if no config file found by Checker module 1st time thru, home path within gstring is set to null b4dummy is built
+== Purpose
+
+This is an open-source tool to continuously translate any asciidoctor file that is changed within a defined folder.
+
+image::divider3.png[align=center, title-align=center]
 
 ''''
 
-NOTE: at io.jnorthr.tools.json.JSONTool.main(JSONTool.groovy:215) - cannot invoke get() on null obj @ln#89
+== DropBox or Google Drive Enabled ?
 
-Use this project jar as a configuration file maintenance tool. Reads and writes JSON-formatted text files.
+This trick works nicely if you have a shared drive service like *Dropbox*, or *Google Drive* etc. and all your internal systems use the same *Dropbox*,etc. account.
 
-== Pre-requisites
+On one of my least-used systems, did the following:
 
- . Working internet connection
- . Installed Git client to copy/clone this repo
- . Ability to use terminal console
+.Gradle Continuous Doctor Translation
+[source,bash]
+----
+cd ~/Dropbox
+git clone https://github.com/jnorthr/DoctorPepper.git
+cd ~/Dropbox/DoctorPepper
+gradlew -t asciidoctor
+----
 
-== Steps
-
- . open terminal console
-
- . change directory ( cd ) into target folder location
-
- . run this command to create a folder named ConfigSlurper and copy down all the pieces :
-
-	*git clone https://github.com/jnorthr/ConfigSlurper.git*
-
- . *cd ConfigSlurper*
-
- . *./gradlew*
-
- . defaultTasks are declared and these tasks run automatically, when you use gradlew with no parameters 
+The *-t* option keeps gradle running in continuous mode so now any changes i make to any asciidoctor files are near-instantly
+translated for me.
 
 ''''
+
+NOTE: If you don't have a *git* client https://git-scm.com/downloads[click here to install one]
+
+''''
+
+
+.This is a comment for the text that follows ?
+The code we write today and tomorrow will probably never run on a single processor system: parallel hardware has become standard.  Not so with the software though, at least not yet. 
 

@@ -1,7 +1,7 @@
-// https://examples.javacodegeeks.com/jvm-languages/groovy/groovy-json-example/
-package io.jnorthr.tools.json;
-//package com.javacodegeeks.example.groovy.json;
+// need imports for JSON parsing bottom of this script
+package io.jnorthr.tools.configuration;
 
+// https://examples.javacodegeeks.com/jvm-languages/groovy/groovy-json-example/
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
     /**
